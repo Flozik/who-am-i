@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -55,7 +58,9 @@ class GameControllerTest {
 		GameDetails gameDetails = new GameDetails();
 		gameDetails.setId("12613126");
 		gameDetails.setStatus("WaitingForPlayers");
+
 		when(gameService.createGame(eq("player"), any(NewGameRequest.class))).thenReturn(gameDetails);
+
 		this.mockMvc.perform(
 						MockMvcRequestBuilders.post("/games")
 								.header("X-Player", "player")
@@ -85,6 +90,7 @@ class GameControllerTest {
 	@Test
 	void suggestCharacter() throws Exception {
 		doNothing().when(gameService).suggestCharacter(eq("1234"), eq("player"), any(CharacterSuggestion.class));
+
 		this.mockMvc.perform(
 						MockMvcRequestBuilders.post("/games/1234/characters")
 								.header("X-Player", "player")
@@ -95,4 +101,48 @@ class GameControllerTest {
 				.andExpect(status().isOk());
 		verify(gameService, times(1)).suggestCharacter(eq("1234"), eq("player"), any(CharacterSuggestion.class));
 	}
+
+	@Test
+	void findByIdTest() throws Exception {
+		final String id = "1234";
+		final String player = "player";
+
+		GameDetails gameDetails = new GameDetails();
+		gameDetails.setId(id);
+		Optional<GameDetails> op = Optional.of(gameDetails);
+
+		when(gameService.findByIdAndPlayer(eq(id), eq(player))).thenReturn(op);
+
+		this.mockMvc.perform(
+						MockMvcRequestBuilders.get("/games/{id}", id)
+								.header("X-Player", player)
+								.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("id").value("1234"));
+
+		verify(gameService, times(1)).findByIdAndPlayer(id, player);
+	}
+
+	@Test
+	void findByIdNoGameTest() throws Exception {
+		final String id = "1234";
+		final String fakeId = "12345";
+		final String player = "player";
+
+		GameDetails gameDetails = new GameDetails();
+		gameDetails.setId(id);
+		Optional<GameDetails> op = Optional.of(gameDetails);
+
+		when(gameService.findByIdAndPlayer(eq(id), eq(player))).thenReturn(op);
+
+		this.mockMvc.perform(
+						MockMvcRequestBuilders.get("/games/{id}", fakeId)
+								.header("X-Player", player)
+								.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound())
+				.andDo(print());
+
+		verify(gameService, times(1)).findByIdAndPlayer(fakeId, player);
+	}
+
 }

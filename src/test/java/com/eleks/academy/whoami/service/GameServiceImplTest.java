@@ -18,11 +18,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class GameServiceImplTest {
@@ -66,6 +70,57 @@ public class GameServiceImplTest {
 		assertEquals(game.getStatus(), gameDetails.getStatus());
 
 		verify(gameRepository, times(1)).save(any(SynchronousGame.class));
+	}
+
+	@Test
+	void findByIdAndPlayerTest() {
+		final String player = "player";
+		final String expectedGameStatus = WaitingForPlayers.class.getName();
+
+		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
+		final String id = game.getId();
+
+		Optional<SynchronousGame> createdGame = Optional.of(game);
+
+		when(gameRepository.findById(id)).thenReturn(createdGame);
+
+		var foundGame = gameService.findByIdAndPlayer(id, player);
+		var expectedGame = GameDetails.builder()
+				.id(foundGame.get().getId())
+				.status(expectedGameStatus)
+				.players(List.of(new PlayerWithState(new PersistentPlayer(player), PlayerState.READY)))
+				.build();
+		Optional<GameDetails> expectedGameOp = Optional.of(expectedGame);
+
+		assertEquals(foundGame, expectedGameOp);
+
+		verify(gameRepository, times(1)).findById(id);
+	}
+
+	@Test
+	void findByIdAndPlayerFailTest() {
+		final String player = "player";
+		final String expectedGameStatus = WaitingForPlayers.class.getName();
+		final String fakeId = "12345";
+
+		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
+		final String id = game.getId();
+
+		Optional<SynchronousGame> createdGame = Optional.of(game);
+
+		when(gameRepository.findById(id)).thenReturn(createdGame);
+
+		var foundGame = gameService.findByIdAndPlayer(id, player);
+		var expectedGame = GameDetails.builder()
+				.id(fakeId)
+				.status(expectedGameStatus)
+				.players(List.of(new PlayerWithState(new PersistentPlayer(player), PlayerState.READY)))
+				.build();
+		Optional<GameDetails> expectedGameOp = Optional.of(expectedGame);
+
+		assertNotEquals(foundGame, expectedGameOp);
+
+		verify(gameRepository, times(1)).findById(id);
 	}
 
 }

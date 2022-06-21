@@ -27,7 +27,8 @@ public class PersistentGame implements Game, SynchronousGame {
 	private final String id;
 
 	private final Queue<GameState> turns = new LinkedBlockingQueue<>();
-	@EqualsAndHashCode.Include private final List<PlayerWithState> players;
+	@EqualsAndHashCode.Include
+	private final List<PlayerWithState> players;
 
 	/**
 	 * Creates a new game (game room) and makes a first enrolment turn by a current player
@@ -51,7 +52,8 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public Optional<SynchronousPlayer> findPlayer(String player) {
-		return this.applyIfPresent(this.turns.peek(), gameState -> gameState.findPlayer(player));
+		return this.players.stream().map(PlayerWithState::getPlayer)
+				.filter(synchronousPlayer -> synchronousPlayer.getName().equals(player)).findFirst();
 	}
 
 	@Override
