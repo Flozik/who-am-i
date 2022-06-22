@@ -111,6 +111,8 @@ class GameControllerTest {
 		gameDetails.setId(id);
 		Optional<GameDetails> op = Optional.of(gameDetails);
 
+		var expectedResponse = "{\"id\":\"1234\",\"status\":null,\"currentTurn\":null,\"players\":null}";
+
 		when(gameService.findByIdAndPlayer(eq(id), eq(player))).thenReturn(op);
 
 		this.mockMvc.perform(
@@ -118,7 +120,7 @@ class GameControllerTest {
 								.header("X-Player", player)
 								.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("id").value("1234"));
+				.andExpect(content().json(expectedResponse));
 
 		verify(gameService, times(1)).findByIdAndPlayer(id, player);
 	}
@@ -140,7 +142,7 @@ class GameControllerTest {
 								.header("X-Player", player)
 								.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound())
-				.andDo(print());
+				.andExpect(content().string(""));
 
 		verify(gameService, times(1)).findByIdAndPlayer(fakeId, player);
 	}

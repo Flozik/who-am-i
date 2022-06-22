@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -100,7 +99,6 @@ public class GameServiceImplTest {
 	@Test
 	void findByIdAndPlayerFailTest() {
 		final String player = "player";
-		final String expectedGameStatus = WaitingForPlayers.class.getName();
 		final String fakeId = "12345";
 
 		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
@@ -110,15 +108,10 @@ public class GameServiceImplTest {
 
 		when(gameRepository.findById(id)).thenReturn(createdGame);
 
-		var foundGame = gameService.findByIdAndPlayer(id, player);
-		var expectedGame = GameDetails.builder()
-				.id(fakeId)
-				.status(expectedGameStatus)
-				.players(List.of(new PlayerWithState(new PersistentPlayer(player), PlayerState.READY)))
-				.build();
-		Optional<GameDetails> expectedGameOp = Optional.of(expectedGame);
+//		var foundGame = gameService.findByIdAndPlayer(id, player);
+		var fakeGame = gameService.findByIdAndPlayer(fakeId, player);
 
-		assertNotEquals(foundGame, expectedGameOp);
+		assertFalse(fakeGame.isPresent());
 
 		verify(gameRepository, times(1)).findById(id);
 	}
