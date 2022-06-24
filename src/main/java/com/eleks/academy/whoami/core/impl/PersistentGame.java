@@ -5,6 +5,7 @@ import com.eleks.academy.whoami.core.SynchronousGame;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.state.GameFinished;
 import com.eleks.academy.whoami.core.state.GameState;
+import com.eleks.academy.whoami.core.state.SuggestingCharacters;
 import com.eleks.academy.whoami.core.state.WaitingForPlayers;
 import com.eleks.academy.whoami.enums.GameStatus;
 import com.eleks.academy.whoami.model.response.PlayerState;
@@ -65,7 +66,13 @@ public class PersistentGame implements Game, SynchronousGame {
 	@Override
 	public SynchronousPlayer enrollToGame(String player) {
 		// TODO: Add player to players list
-		return new PersistentPlayer(player);
+		PersistentPlayer newPlayer = new PersistentPlayer(player);
+		PlayerWithState playerWithState = new PlayerWithState(newPlayer, PlayerState.READY);
+		this.players.add(playerWithState);
+
+//		GameState gameState = new SuggestingCharacters();
+//		turns.add(gameState);
+		return newPlayer;
 	}
 
 	@Override

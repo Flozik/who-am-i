@@ -133,4 +133,22 @@ public class GameServiceImplTest {
 
 		verify(gameRepository, times(1)).findById(id);
 	}
+
+	@Test
+	void enrollToGameTest() {
+		final String player = "player";
+		final String newPlayer = "newPlayer";
+
+		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
+		Optional<SynchronousGame> createdGame = Optional.of(game);
+		final String id = game.getId();
+
+		when(gameRepository.findById(id)).thenReturn(createdGame);
+
+		var enrolledPlayer = gameService.enrollToGame(id, newPlayer);
+		var expectedPlayer = new PersistentPlayer(newPlayer);
+
+		assertEquals(enrolledPlayer, expectedPlayer);
+	}
+
 }

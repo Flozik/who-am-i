@@ -1,6 +1,10 @@
 package com.eleks.academy.whoami.controller;
 
 import com.eleks.academy.whoami.configuration.GameControllerAdvice;
+import com.eleks.academy.whoami.core.SynchronousGame;
+import com.eleks.academy.whoami.core.impl.PersistentGame;
+import com.eleks.academy.whoami.core.impl.PersistentPlayer;
+import com.eleks.academy.whoami.model.SynchronousPlayer;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
@@ -146,6 +150,28 @@ class GameControllerTest {
 				.andExpect(content().string(""));
 
 		verify(gameService, times(1)).findByIdAndPlayer(fakeId, player);
+	}
+
+	@Test
+	void enrollToGameTest() throws Exception {
+		final String hostPlayer = "hostPlayer";
+		final String newPlayer = "newPlayer";
+
+		SynchronousGame game = new PersistentGame(hostPlayer, gameRequest.getMaxPlayers());
+		final String id = game.getId();
+
+		var player1 = new PersistentPlayer(newPlayer);
+
+		when(gameService.enrollToGame(id, newPlayer)).thenReturn(player1);
+
+		this.mockMvc.perform(
+						MockMvcRequestBuilders.post("/{id}/players", id)
+								.header("X-Player", newPlayer)
+								.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(status().isOk());
+
+		verify(gameService, times(1)).enrollToGame(id, newPlayer);
 	}
 
 }
