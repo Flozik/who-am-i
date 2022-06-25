@@ -161,15 +161,16 @@ class GameControllerTest {
 		final String id = game.getId();
 
 		var player1 = new PersistentPlayer(newPlayer);
+		var expectedResponse = "{\"name\":\"newPlayer\",\"character\":null,\"question\":null,\"guess\":null}";
 
 		when(gameService.enrollToGame(id, newPlayer)).thenReturn(player1);
 
 		this.mockMvc.perform(
-						MockMvcRequestBuilders.post("/{id}/players", id)
+						MockMvcRequestBuilders.post("/games/{id}/players", id)
 								.header("X-Player", newPlayer)
 								.contentType(MediaType.APPLICATION_JSON))
-				.andDo(print())
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andExpect(content().string(expectedResponse));
 
 		verify(gameService, times(1)).enrollToGame(id, newPlayer);
 	}

@@ -17,10 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class PersistentGame implements Game, SynchronousGame {
@@ -65,13 +67,15 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public SynchronousPlayer enrollToGame(String player) {
-		// TODO: Add player to players list
 		PersistentPlayer newPlayer = new PersistentPlayer(player);
 		PlayerWithState playerWithState = new PlayerWithState(newPlayer, PlayerState.READY);
 		this.players.add(playerWithState);
 
-//		GameState gameState = new SuggestingCharacters();
-//		turns.add(gameState);
+		var playersMap = convertListToMap(players);
+		GameState gameState = new SuggestingCharacters(playersMap);
+
+		turns.remove();
+		turns.add(gameState);
 		return newPlayer;
 	}
 
@@ -147,4 +151,12 @@ public class PersistentGame implements Game, SynchronousGame {
 				.map(mapper)
 				.orElse(fallback);
 	}
+
+	private Map<String, SynchronousPlayer> convertListToMap(List<PlayerWithState> list) {
+		Map<String, SynchronousPlayer> playersMap = list.stream()
+				.collect(Collectors.toMap(p -> p.getPlayer().getName(), PlayerWithState::getPlayer));
+
+		return playersMap;
+	}
+
 }

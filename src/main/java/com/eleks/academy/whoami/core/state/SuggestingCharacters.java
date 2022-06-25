@@ -15,6 +15,8 @@ import static java.util.stream.Collectors.toList;
 
 public final class SuggestingCharacters extends AbstractGameState {
 
+	private static final String SUGGESTING_CHARACTER = "SUGGESTING_CHARACTER";
+
 	private final Lock lock = new ReentrantLock();
 
 	private final Map<String, SynchronousPlayer> players;
@@ -47,6 +49,11 @@ public final class SuggestingCharacters extends AbstractGameState {
 	@Override
 	public Optional<SynchronousPlayer> findPlayer(String player) {
 		return Optional.ofNullable(this.players.get(player));
+	}
+
+	@Override
+	public String getStatus() {
+		return SUGGESTING_CHARACTER;
 	}
 
 	// TODO: Consider extracting into {@link GameState}
