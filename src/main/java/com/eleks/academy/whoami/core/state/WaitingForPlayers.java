@@ -4,6 +4,7 @@ import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.enums.GameStatus;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,4 +43,15 @@ public final class WaitingForPlayers extends AbstractGameState {
 	public GameStatus getStatus() {
 		return WAITING_FOR_PLAYERS;
 	}
+
+	@Override
+	public List<SynchronousPlayer> getPlayersList() {
+		return this.players.values().stream().toList();
+	}
+
+	public SynchronousPlayer addPlayer(SynchronousPlayer player) {
+		players.put(player.getName(), player);
+		return player;
+	}
+
 }

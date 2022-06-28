@@ -23,4 +23,10 @@ public class PlayerWithState {
 		this.player = player;
 	}
 
+	public static PlayerWithState of(SynchronousPlayer player) {
+		return PlayerWithState.builder()
+				.player(player)
+				.build();
+	}
+
 }

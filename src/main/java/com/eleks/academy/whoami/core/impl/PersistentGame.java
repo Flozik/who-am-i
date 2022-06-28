@@ -5,24 +5,19 @@ import com.eleks.academy.whoami.core.SynchronousGame;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.state.GameFinished;
 import com.eleks.academy.whoami.core.state.GameState;
-import com.eleks.academy.whoami.core.state.SuggestingCharacters;
 import com.eleks.academy.whoami.core.state.WaitingForPlayers;
 import com.eleks.academy.whoami.enums.GameStatus;
-import com.eleks.academy.whoami.model.response.PlayerState;
 import com.eleks.academy.whoami.model.response.PlayerWithState;
 import lombok.EqualsAndHashCode;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class PersistentGame implements Game, SynchronousGame {
@@ -30,9 +25,7 @@ public class PersistentGame implements Game, SynchronousGame {
 	private final Lock turnLock = new ReentrantLock();
 	private final String id;
 
-	private final Queue<GameState> turns = new LinkedBlockingQueue<>();
-	@EqualsAndHashCode.Include
-	private final List<PlayerWithState> players;
+	private final Queue<GameState> currentState = new LinkedBlockingQueue<>();
 
 	/**
 	 * Creates a new game (game room) and makes a first enrolment turn by a current player
@@ -44,20 +37,18 @@ public class PersistentGame implements Game, SynchronousGame {
 		this.id = String.format("%d-%d",
 				Instant.now().toEpochMilli(),
 				Double.valueOf(Math.random() * 999).intValue());
-		this.players = new ArrayList<>(maxPlayers);
-
-		PersistentPlayer player = new PersistentPlayer(hostPlayer);
-		PlayerWithState playerWithState = new PlayerWithState(player, PlayerState.READY);
-		this.players.add(playerWithState);
 
 		GameState gameState = new WaitingForPlayers(maxPlayers);
-		turns.add(gameState);
+		currentState.add(gameState);
+		GameState state = currentState.peek();
+
+		var newPlayer = new PersistentPlayer(hostPlayer);
+		((WaitingForPlayers)state).addPlayer(newPlayer);
 	}
 
 	@Override
 	public Optional<SynchronousPlayer> findPlayer(String player) {
-		return this.players.stream().map(PlayerWithState::getPlayer)
-				.filter(synchronousPlayer -> synchronousPlayer.getName().equals(player)).findFirst();
+		return this.applyIfPresent(this.currentState.peek(), gameState -> gameState.findPlayer(player));
 	}
 
 	@Override
@@ -67,21 +58,27 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public SynchronousPlayer enrollToGame(String player) {
-		PersistentPlayer newPlayer = new PersistentPlayer(player);
-		PlayerWithState playerWithState = new PlayerWithState(newPlayer, PlayerState.READY);
-		this.players.add(playerWithState);
+		var checkState = currentState.peek().getStatus();
+		if (checkState.equals(GameStatus.WAITING_FOR_PLAYERS)) {
+			GameState state = currentState.peek();
 
-		var playersMap = convertListToMap(players);
-		GameState gameState = new SuggestingCharacters(playersMap);
+			var newPlayer = new PersistentPlayer(player);
+			var addedPlayer = ((WaitingForPlayers)state).addPlayer(newPlayer);
 
-		turns.remove();
-		turns.add(gameState);
-		return newPlayer;
+			if (currentState.peek().getPlayersInGame() == 4) {
+				currentState.add(currentState.peek().next());
+				currentState.remove();
+				return addedPlayer;
+			}
+			return addedPlayer;
+		} else {
+			throw new RuntimeException("Game [" + this.getId() + "] has state [" + this.getStatus() + "]");
+		}
 	}
 
 	@Override
 	public String getTurn() {
-		return this.applyIfPresent(this.turns.peek(), GameState::getCurrentTurn);
+		return this.applyIfPresent(this.currentState.peek(), GameState::getCurrentTurn);
 	}
 
 	@Override
@@ -101,22 +98,22 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public boolean isAvailable() {
-		return this.turns.peek() instanceof WaitingForPlayers;
+		return this.currentState.peek() instanceof WaitingForPlayers;
 	}
 
 	@Override
 	public GameStatus getStatus() {
-		return this.applyIfPresent(this.turns.peek(), GameState::getStatus);
+		return this.applyIfPresent(this.currentState.peek(), GameState::getStatus);
 	}
 
 	@Override
 	public List<PlayerWithState> getPlayersInGame() {
-		return this.players;
+		return this.currentState.peek().getPlayersList().stream().map(PlayerWithState::of).toList();
 	}
 
 	@Override
 	public boolean isFinished() {
-		return this.turns.isEmpty();
+		return this.currentState.isEmpty();
 	}
 
 
@@ -137,7 +134,7 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public void play() {
-		while (!(this.turns.peek() instanceof GameFinished)) {
+		while (!(this.currentState.peek() instanceof GameFinished)) {
 			this.makeTurn();
 		}
 	}
@@ -150,13 +147,6 @@ public class PersistentGame implements Game, SynchronousGame {
 		return Optional.ofNullable(source)
 				.map(mapper)
 				.orElse(fallback);
-	}
-
-	private Map<String, SynchronousPlayer> convertListToMap(List<PlayerWithState> list) {
-		Map<String, SynchronousPlayer> playersMap = list.stream()
-				.collect(Collectors.toMap(p -> p.getPlayer().getName(), PlayerWithState::getPlayer));
-
-		return playersMap;
 	}
 
 }

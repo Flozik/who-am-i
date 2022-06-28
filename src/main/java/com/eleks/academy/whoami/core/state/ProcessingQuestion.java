@@ -3,6 +3,7 @@ package com.eleks.academy.whoami.core.state;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.exception.GameException;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,4 +39,8 @@ public final class ProcessingQuestion extends AbstractGameState {
 		return this.currentPlayer;
 	}
 
+	@Override
+	public List<SynchronousPlayer> getPlayersList() {
+		return null;
+	}
 }

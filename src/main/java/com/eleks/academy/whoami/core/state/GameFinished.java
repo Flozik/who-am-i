@@ -2,6 +2,7 @@ package com.eleks.academy.whoami.core.state;
 
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 
+import java.util.List;
 import java.util.Optional;
 
 public final class GameFinished extends AbstractGameState {
@@ -18,5 +19,10 @@ public final class GameFinished extends AbstractGameState {
 	@Override
 	public Optional<SynchronousPlayer> findPlayer(String player) {
 		return Optional.empty();
+	}
+
+	@Override
+	public List<SynchronousPlayer> getPlayersList() {
+		return null;
 	}
 }

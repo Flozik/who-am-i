@@ -3,6 +3,7 @@ package com.eleks.academy.whoami.core.state;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.exception.GameException;
 import com.eleks.academy.whoami.core.impl.GameCharacter;
+import com.eleks.academy.whoami.enums.GameStatus;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -15,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 
 public final class SuggestingCharacters extends AbstractGameState {
 
-	private static final String SUGGESTING_CHARACTER = "SUGGESTING_CHARACTER";
+//	private static final String SUGGESTING_CHARACTER = "SUGGESTING_CHARACTER";
 
 	private final Lock lock = new ReentrantLock();
 
@@ -52,8 +53,8 @@ public final class SuggestingCharacters extends AbstractGameState {
 	}
 
 	@Override
-	public String getStatus() {
-		return SUGGESTING_CHARACTER;
+	public GameStatus getStatus() {
+		return GameStatus.SUGGESTING_CHARACTERS;
 	}
 
 	// TODO: Consider extracting into {@link GameState}
@@ -82,6 +83,11 @@ public final class SuggestingCharacters extends AbstractGameState {
 		characters.add(GameCharacter.of(character, player));
 
 		return this;
+	}
+
+	@Override
+	public List<SynchronousPlayer> getPlayersList() {
+		return this.players.values().stream().toList();
 	}
 
 	/**
