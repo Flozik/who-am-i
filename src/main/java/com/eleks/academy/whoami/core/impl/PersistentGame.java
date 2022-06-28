@@ -59,6 +59,7 @@ public class PersistentGame implements Game, SynchronousGame {
 	@Override
 	public SynchronousPlayer enrollToGame(String player) {
 		var checkState = currentState.peek().getStatus();
+		
 		if (checkState.equals(GameStatus.WAITING_FOR_PLAYERS)) {
 			GameState state = currentState.peek();
 
