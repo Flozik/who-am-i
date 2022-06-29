@@ -86,8 +86,8 @@ public final class SuggestingCharacters extends AbstractGameState {
 	}
 
 	@Override
-	public List<SynchronousPlayer> getPlayersList() {
-		return this.players.values().stream().toList();
+	public Map<String, SynchronousPlayer> getPlayers() {
+		return this.players;
 	}
 
 	/**

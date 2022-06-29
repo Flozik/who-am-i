@@ -3,7 +3,7 @@ package com.eleks.academy.whoami.core.state;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.enums.GameStatus;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public sealed interface GameState permits AbstractGameState {
@@ -39,7 +39,7 @@ public sealed interface GameState permits AbstractGameState {
 	 *
 	 * @return list with players
 	 */
-	List<SynchronousPlayer> getPlayersList();
+	Map<String, SynchronousPlayer> getPlayers();
 
 	/**
 	 * Used for presentation purposes only

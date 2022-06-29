@@ -109,7 +109,8 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public List<PlayerWithState> getPlayersInGame() {
-		return this.currentState.peek().getPlayersList().stream().map(PlayerWithState::of).toList();
+//		return this.currentState.peek().getPlayersList().stream().map(PlayerWithState::of).toList();
+		return this.currentState.peek().getPlayers().values().stream().map(PlayerWithState::of).toList();
 	}
 
 	@Override

@@ -162,7 +162,7 @@ class GameControllerTest {
 								.header("X-Player", newPlayer)
 								.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(content().string(expectedResponse));
+				.andExpect(content().json(expectedResponse));
 
 		verify(gameService, times(1)).enrollToGame(id, newPlayer);
 	}
