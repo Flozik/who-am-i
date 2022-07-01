@@ -22,7 +22,7 @@ public interface GameService {
 
 	void suggestCharacter(String id, String player, CharacterSuggestion suggestion);
 
-	Optional<GameDetails> startGame(String id, String player);
+	Optional<GameDetails> startGame(String id);
 
 	void askQuestion(String gameId, String player, String message);
 

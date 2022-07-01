@@ -11,6 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -92,65 +93,43 @@ public final class SuggestingCharacters extends AbstractGameState {
 		return this.players;
 	}
 
-	/**
-	 * The term author is referred to a player who suggested at least one character
-	 * <p>
-	 * Basic algorithm description:
-	 * 1) Collect all randomly-ordered authors into a form of cyclic oriented graph.
-	 * 2) Assign to each author a random character suggested by the next author (next graph node)
-	 * 3) Randomly assign all the suggested characters that are left disregarding the author to
-	 * all the non-author players
-	 */
-	private GameState assignCharacters() {
-		Function<String, Integer> randomAuthorOrderComparator = value ->
-				Double.valueOf(Math.random() * 1000).intValue();
+	Map<String, String> assignCharacters() {
+		Map<String, String> playerToCharacterCopy = new HashMap<>(playerCharacterMap);
 
-		final var authors =
-				this.suggestedCharacters.keySet()
-						.stream()
-						.sorted(Comparator.comparing(randomAuthorOrderComparator))
-						.collect(Collectors.toList());
+		boolean isValueChanged;
 
-		authors.forEach(author -> {
-			final var character = this.getRandomCharacter()
-					.apply(this.suggestedCharacters.get(this.<String>cyclicNext().apply(authors, author)));
+		do {
+			playerToCharacterCopy = getRandomCharacter(playerToCharacterCopy);
+			isValueChanged = isTwoValueEquals(playerToCharacterCopy);
+		} while (!isValueChanged);
 
-			character.markTaken();
-
-			this.playerCharacterMap.put(author, character.getCharacter());
-		});
-
-		final var authorsSet = new HashSet<>(authors);
-
-		final var nonTakenCharacters = this.suggestedCharacters.values()
-				.stream()
-				.flatMap(Collection::stream)
-				.filter(character -> !character.isTaken())
-				.collect(toList());
-
-		this.players.keySet()
-				.stream()
-				.filter(player -> !authorsSet.contains(player))
-				.forEach(player -> {
-					final var character = this.getRandomCharacter().apply(nonTakenCharacters);
-
-					character.markTaken();
-
-					this.playerCharacterMap.put(player, character.getCharacter());
-
-					nonTakenCharacters.remove(character);
-				});
-
-		return this;
+		return playerToCharacterCopy;
 	}
 
+	private Map<String, String> getRandomCharacter(Map<String, String> playerCharacter) {
+		List<String> key = new ArrayList<>(playerCharacter.keySet());
+		List<String> value = new ArrayList<>(playerCharacter.values());
 
-	private Function<List<GameCharacter>, GameCharacter> getRandomCharacter() {
-		return gameCharacters -> {
-			int randomPos = (int) (Math.random() * gameCharacters.size());
+		Collections.shuffle(value);
 
-			return gameCharacters.get(randomPos);
-		};
+		playerCharacter = IntStream.range(0, playerCharacter.size()).boxed()
+				.collect(Collectors.toMap(key::get, value::get));
+
+		return playerCharacter;
+	}
+
+	private boolean isTwoValueEquals(Map<String, String> playerCharacterShuffled) {
+		List<String> oldValues = new ArrayList<>(this.playerCharacterMap.values());
+		List<String> shuffledValues = new ArrayList<>(playerCharacterShuffled.values());
+
+		int count = 0;
+		for (int i = 0; i < this.playerCharacterMap.size(); i++) {
+			boolean isTwoValuesEqual = oldValues.get(i).equals(shuffledValues.get(i));
+			if (isTwoValuesEqual) {
+				count++;
+			}
+		}
+		return count == 0;
 	}
 
 	private <T> BiFunction<List<T>, T, T> cyclicNext() {

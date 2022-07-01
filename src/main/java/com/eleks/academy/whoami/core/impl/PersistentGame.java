@@ -95,7 +95,15 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public SynchronousGame start() {
-		return null;
+		var checkState = currentState.peek().getStatus();
+
+		if (checkState.equals(GameStatus.SUGGESTING_CHARACTERS)) {
+			currentState.add(currentState.peek().next());
+			currentState.remove();
+			return this;
+		} else {
+			throw new RuntimeException("Game [" + this.getId() + "] has state [" + this.getStatus() + "]");
+		}
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.eleks.academy.whoami.controller;
 
 import com.eleks.academy.whoami.configuration.GameControllerAdvice;
 import com.eleks.academy.whoami.core.SynchronousGame;
+import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.impl.PersistentGame;
 import com.eleks.academy.whoami.core.impl.PersistentPlayer;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
@@ -24,6 +25,7 @@ import static com.eleks.academy.whoami.enums.GameStatus.WAITING_FOR_PLAYERS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -165,6 +167,28 @@ class GameControllerTest {
 				.andExpect(content().json(expectedResponse));
 
 		verify(gameService, times(1)).enrollToGame(id, newPlayer);
+	}
+
+	@Test
+	void startGameTest() throws Exception {
+		final String id = "12345";
+
+		GameDetails gameDetails = new GameDetails();
+		gameDetails.setId(id);
+		Optional<GameDetails> op = Optional.of(gameDetails);
+
+		when(gameService.startGame(eq(id))).thenReturn(op);
+
+		var expectedResponse = "{\"id\":\"12345\",\"status\":null,\"currentTurn\":null,\"players\":null}";
+
+		this.mockMvc.perform(
+						MockMvcRequestBuilders.post("/games/{id}", id)
+								.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(content().json(expectedResponse));
+
+		verify(gameService, times(1)).startGame(id);
 	}
 
 }
