@@ -4,9 +4,12 @@ import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.impl.PersistentPlayer;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class SuggestingCharacterTest {
@@ -28,7 +31,13 @@ public class SuggestingCharacterTest {
 
 		var result = characters.assignCharacters();
 
-		assertNotEquals(inputPlayersAndCharacters, result);
+		List<String> oldValues = new ArrayList<>(inputPlayersAndCharacters.values());
+		List<String> shuffledValues = new ArrayList<>(result.values());
+
+		for (int i = 0; i < inputPlayersAndCharacters.size(); i++) {
+			assertNotEquals(oldValues.get(i), shuffledValues.get(i));
+			System.out.println(oldValues.get(i) + " : " + shuffledValues.get(i));
+		}
 	}
 
 }

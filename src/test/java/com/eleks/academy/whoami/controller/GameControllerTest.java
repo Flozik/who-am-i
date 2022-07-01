@@ -172,23 +172,25 @@ class GameControllerTest {
 	@Test
 	void startGameTest() throws Exception {
 		final String id = "12345";
+		final String player = "player";
 
 		GameDetails gameDetails = new GameDetails();
 		gameDetails.setId(id);
 		Optional<GameDetails> op = Optional.of(gameDetails);
 
-		when(gameService.startGame(eq(id))).thenReturn(op);
+		when(gameService.startGame(eq(id), eq(player))).thenReturn(op);
 
 		var expectedResponse = "{\"id\":\"12345\",\"status\":null,\"currentTurn\":null,\"players\":null}";
 
 		this.mockMvc.perform(
 						MockMvcRequestBuilders.post("/games/{id}", id)
+								.header("X-Player", player)
 								.contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(content().json(expectedResponse));
 
-		verify(gameService, times(1)).startGame(id);
+		verify(gameService, times(1)).startGame(id, player);
 	}
 
 }

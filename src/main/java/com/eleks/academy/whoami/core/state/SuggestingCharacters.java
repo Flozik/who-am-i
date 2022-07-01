@@ -94,14 +94,12 @@ public final class SuggestingCharacters extends AbstractGameState {
 	}
 
 	Map<String, String> assignCharacters() {
-		Map<String, String> playerToCharacterCopy = new HashMap<>(playerCharacterMap);
+		Map<String, String> playerToCharacterCopy = new HashMap<>(this.playerCharacterMap);
 
-		boolean isValueChanged;
-
+		Map<String, String> playerCharacterShuffled;
 		do {
-			playerToCharacterCopy = getRandomCharacter(playerToCharacterCopy);
-			isValueChanged = isTwoValueEquals(playerToCharacterCopy);
-		} while (!isValueChanged);
+			playerCharacterShuffled = getRandomCharacter(playerToCharacterCopy);
+		} while (!isTwoValueEquals(playerToCharacterCopy, playerCharacterShuffled));
 
 		return playerToCharacterCopy;
 	}
@@ -118,12 +116,12 @@ public final class SuggestingCharacters extends AbstractGameState {
 		return playerCharacter;
 	}
 
-	private boolean isTwoValueEquals(Map<String, String> playerCharacterShuffled) {
-		List<String> oldValues = new ArrayList<>(this.playerCharacterMap.values());
+	private boolean isTwoValueEquals(Map<String, String> oldPlayerCharacter, Map<String, String> playerCharacterShuffled) {
+		List<String> oldValues = new ArrayList<>(oldPlayerCharacter.values());
 		List<String> shuffledValues = new ArrayList<>(playerCharacterShuffled.values());
 
 		int count = 0;
-		for (int i = 0; i < this.playerCharacterMap.size(); i++) {
+		for (int i = 0; i < oldPlayerCharacter.size(); i++) {
 			boolean isTwoValuesEqual = oldValues.get(i).equals(shuffledValues.get(i));
 			if (isTwoValuesEqual) {
 				count++;
