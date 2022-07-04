@@ -9,11 +9,8 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static java.util.stream.Collectors.toList;
 
 public final class SuggestingCharacters extends AbstractGameState {
 
@@ -97,14 +94,20 @@ public final class SuggestingCharacters extends AbstractGameState {
 		Map<String, String> playerToCharacterCopy = new HashMap<>(this.playerCharacterMap);
 
 		Map<String, String> playerCharacterShuffled;
+		int countShuffledCharacters = 0;
+
 		do {
-			playerCharacterShuffled = getRandomCharacter(playerToCharacterCopy);
-		} while (!isTwoValueEquals(playerToCharacterCopy, playerCharacterShuffled));
+			playerCharacterShuffled = shuffledCharacters(playerToCharacterCopy);
+			countShuffledCharacters++;
+			if (countShuffledCharacters == 5) {
+				playerCharacterShuffled = moveCharacters(playerToCharacterCopy);
+			}
+		} while (!isTwoValueEquals(playerToCharacterCopy, playerCharacterShuffled) && countShuffledCharacters != 5);
 
 		return playerToCharacterCopy;
 	}
 
-	private Map<String, String> getRandomCharacter(Map<String, String> playerCharacter) {
+	private Map<String, String> shuffledCharacters(Map<String, String> playerCharacter) {
 		List<String> key = new ArrayList<>(playerCharacter.keySet());
 		List<String> value = new ArrayList<>(playerCharacter.values());
 
@@ -117,17 +120,31 @@ public final class SuggestingCharacters extends AbstractGameState {
 	}
 
 	private boolean isTwoValueEquals(Map<String, String> oldPlayerCharacter, Map<String, String> playerCharacterShuffled) {
-		List<String> oldValues = new ArrayList<>(oldPlayerCharacter.values());
-		List<String> shuffledValues = new ArrayList<>(playerCharacterShuffled.values());
-
 		int count = 0;
-		for (int i = 0; i < oldPlayerCharacter.size(); i++) {
-			boolean isTwoValuesEqual = oldValues.get(i).equals(shuffledValues.get(i));
+
+		for (Map.Entry<String, String> entry : oldPlayerCharacter.entrySet()) {
+			String key = entry.getKey();
+			String val1 = entry.getValue();
+			String val2 = playerCharacterShuffled.get(key);
+			boolean isTwoValuesEqual = val1.equals(val2);
+
 			if (isTwoValuesEqual) {
 				count++;
 			}
 		}
+
 		return count == 0;
+	}
+
+	private static Map<String, String> moveCharacters(Map<String, String> playerCharacter) {
+		NavigableMap<String, String> tmpPlayerCharacter = new TreeMap<>(playerCharacter);
+
+		for (var element : tmpPlayerCharacter.entrySet()) {
+			String nextValue = tmpPlayerCharacter.higherEntry(element.getValue()).toString();
+			playerCharacter.put(element.getKey(), nextValue);
+		}
+
+		return playerCharacter;
 	}
 
 	private <T> BiFunction<List<T>, T, T> cyclicNext() {

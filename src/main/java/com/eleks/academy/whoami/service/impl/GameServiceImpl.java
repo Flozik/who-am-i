@@ -76,6 +76,7 @@ public class GameServiceImpl implements GameService {
 	@Override
 	public Optional<GameDetails> startGame(String id, String player) {
 		return this.gameRepository.findById(id)
+				.filter(game -> game.findPlayer(player).isPresent())
 				.map(SynchronousGame::start)
 				.map(GameDetails::of);
 	}
