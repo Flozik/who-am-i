@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,8 +38,8 @@ public class GameTest {
 
 		suggestCharacter(id);
 
-		gameService.startGame(id, player);
-		logger.log(Level.INFO, "Current game details after start: {0}", asJsonString(game));
+		var startedGame = gameService.startGame(id, player);
+		logger.log(Level.INFO, "Current game details after start: {0}", asJsonStringOptionalGameDetails(startedGame));
 
 		// TODO: create method firstTurn with parameter id for a game after starting
 	}
@@ -46,6 +47,13 @@ public class GameTest {
 	private String asJsonString(GameDetails gameDetails) {
 		try {
 			return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(gameDetails);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	private String asJsonStringOptionalGameDetails(Optional<GameDetails> op) {
+		try {
+			return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(op.get());
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}

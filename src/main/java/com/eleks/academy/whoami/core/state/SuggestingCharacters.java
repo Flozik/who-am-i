@@ -2,7 +2,6 @@ package com.eleks.academy.whoami.core.state;
 
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.exception.GameException;
-import com.eleks.academy.whoami.core.impl.GameCharacter;
 import com.eleks.academy.whoami.enums.GameStatus;
 
 import java.util.*;
@@ -17,19 +16,13 @@ public final class SuggestingCharacters extends AbstractGameState {
 	private final Lock lock = new ReentrantLock();
 
 	private final Map<String, SynchronousPlayer> players;
-	private final Map<String, List<GameCharacter>> suggestedCharacters;
 	private final Map<String, String> playerCharacterMap;
 
 	public SuggestingCharacters(Map<String, SynchronousPlayer> players) {
 		super(players.size(), players.size());
 
 		this.players = players;
-		this.suggestedCharacters = new HashMap<>(this.players.size());
 		this.playerCharacterMap = new HashMap<>(this.players.size());
-
-		for (SynchronousPlayer nextPlayer : this.players.values()) {
-			this.playerCharacterMap.put(nextPlayer.getName(), nextPlayer.getCharacter());
-		}
 	}
 
 	/**
@@ -57,32 +50,17 @@ public final class SuggestingCharacters extends AbstractGameState {
 		return GameStatus.SUGGESTING_CHARACTERS;
 	}
 
-	// TODO: Consider extracting into {@link GameState}
 	private Boolean finished() {
-		final var enoughCharacters = Optional.of(this.suggestedCharacters)
+		this.toPlayerCharacterMap(this.players);
+
+		final var enoughCharacters = Optional.of(this.playerCharacterMap)
 				.map(Map::values)
 				.stream()
 				.mapToLong(Collection::size)
 				.sum() >= this.players.size();
 
-		return this.suggestedCharacters.size() > 1
+		return this.playerCharacterMap.size() > 1
 				&& enoughCharacters;
-	}
-
-	private GameState suggestCharacter(String player, String character) {
-		List<GameCharacter> characters = this.suggestedCharacters.get(player);
-
-		if (Objects.isNull(characters)) {
-			final var newCharacters = new ArrayList<GameCharacter>();
-
-			this.suggestedCharacters.put(player, newCharacters);
-
-			characters = newCharacters;
-		}
-
-		characters.add(GameCharacter.of(character, player));
-
-		return this;
 	}
 
 	@Override
@@ -104,7 +82,7 @@ public final class SuggestingCharacters extends AbstractGameState {
 			}
 		} while (!isTwoValueEquals(playerToCharacterCopy, playerCharacterShuffled) && countShuffledCharacters != 5);
 
-		return playerToCharacterCopy;
+		return playerCharacterShuffled;
 	}
 
 	private Map<String, String> shuffledCharacters(Map<String, String> playerCharacter) {
@@ -145,6 +123,12 @@ public final class SuggestingCharacters extends AbstractGameState {
 		}
 
 		return playerCharacter;
+	}
+
+	private void toPlayerCharacterMap(Map<String, SynchronousPlayer> players) {
+		for (SynchronousPlayer nextPlayer : players.values()) {
+			this.playerCharacterMap.put(nextPlayer.getName(), nextPlayer.getCharacter());
+		}
 	}
 
 	private <T> BiFunction<List<T>, T, T> cyclicNext() {

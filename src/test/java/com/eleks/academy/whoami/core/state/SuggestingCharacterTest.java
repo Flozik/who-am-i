@@ -17,10 +17,21 @@ public class SuggestingCharacterTest {
 	void assignCharactersTest() {
 		for (int i = 0; i <=10; i++) {
 			Map<String, SynchronousPlayer> players = new HashMap<>(4);
-			players.put("Player1", new PersistentPlayer("Player1"));
-			players.put("Player2", new PersistentPlayer("Player2"));
-			players.put("Player3", new PersistentPlayer("Player3"));
-			players.put("Player4", new PersistentPlayer("Player4"));
+			SynchronousPlayer player1 = new PersistentPlayer("Player1");
+			SynchronousPlayer player2 = new PersistentPlayer("Player2");
+			SynchronousPlayer player3 = new PersistentPlayer("Player3");
+			SynchronousPlayer player4 = new PersistentPlayer("Player4");
+
+			player1.setCharacter("Character1");
+			player2.setCharacter("Character2");
+			player3.setCharacter("Character3");
+			player4.setCharacter("Character4");
+
+			players.put("Player1", player1);
+			players.put("Player2", player2);
+			players.put("Player3", player3);
+			players.put("Player4", player4);
+
 			var characters = new SuggestingCharacters(players);
 
 			Map<String, String> inputPlayersAndCharacters = new HashMap<>(4);
