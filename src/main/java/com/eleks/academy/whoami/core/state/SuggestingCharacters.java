@@ -2,6 +2,7 @@ package com.eleks.academy.whoami.core.state;
 
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.exception.GameException;
+import com.eleks.academy.whoami.core.impl.PersistentPlayer;
 import com.eleks.academy.whoami.enums.GameStatus;
 
 import java.util.*;
@@ -14,8 +15,10 @@ import java.util.stream.IntStream;
 public final class SuggestingCharacters extends AbstractGameState {
 
 	private final Lock lock = new ReentrantLock();
+	static final int FAILED_SET_RANDOM_CHARACTERS = 5;
 
 	private final Map<String, SynchronousPlayer> players;
+	private Map<String, SynchronousPlayer> playersShuffled = new HashMap<>();
 	private final Map<String, String> playerCharacterMap;
 
 	public SuggestingCharacters(Map<String, SynchronousPlayer> players) {
@@ -36,7 +39,7 @@ public final class SuggestingCharacters extends AbstractGameState {
 		return Optional.of(this)
 				.filter(SuggestingCharacters::finished)
 				.map(SuggestingCharacters::assignCharacters)
-				.map(then -> new ProcessingQuestion(this.players))
+				.map(then -> new ProcessingQuestion(this.playersShuffled))
 				.orElseThrow(() -> new GameException("Cannot start game"));
 	}
 
@@ -50,17 +53,10 @@ public final class SuggestingCharacters extends AbstractGameState {
 		return GameStatus.SUGGESTING_CHARACTERS;
 	}
 
-	private Boolean finished() {
+	private boolean finished() {
 		this.toPlayerCharacterMap(this.players);
 
-		final var enoughCharacters = Optional.of(this.playerCharacterMap)
-				.map(Map::values)
-				.stream()
-				.mapToLong(Collection::size)
-				.sum() >= this.players.size();
-
-		return this.playerCharacterMap.size() > 1
-				&& enoughCharacters;
+		return this.playerCharacterMap.size() == this.playerCharacterMap.values().size();
 	}
 
 	@Override
@@ -77,10 +73,14 @@ public final class SuggestingCharacters extends AbstractGameState {
 		do {
 			playerCharacterShuffled = shuffledCharacters(playerToCharacterCopy);
 			countShuffledCharacters++;
-			if (countShuffledCharacters == 5) {
-				playerCharacterShuffled = moveCharacters(playerToCharacterCopy);
-			}
-		} while (!isTwoValueEquals(playerToCharacterCopy, playerCharacterShuffled) && countShuffledCharacters != 5);
+		} while (!isTwoValueEquals(playerToCharacterCopy, playerCharacterShuffled));
+
+		if (countShuffledCharacters == FAILED_SET_RANDOM_CHARACTERS) {
+			playerCharacterShuffled = moveCharacters(playerToCharacterCopy,
+					new Random().nextInt((playerToCharacterCopy.size() - 1) + 1));
+		}
+
+		fillPlayersWithShuffledCharacters(playerCharacterShuffled);
 
 		return playerCharacterShuffled;
 	}
@@ -114,15 +114,28 @@ public final class SuggestingCharacters extends AbstractGameState {
 		return count == 0;
 	}
 
-	private static Map<String, String> moveCharacters(Map<String, String> playerCharacter) {
-		NavigableMap<String, String> tmpPlayerCharacter = new TreeMap<>(playerCharacter);
-
-		for (var element : tmpPlayerCharacter.entrySet()) {
-			String nextValue = tmpPlayerCharacter.higherEntry(element.getValue()).toString();
-			playerCharacter.put(element.getKey(), nextValue);
+	Map<String, String> moveCharacters(Map<String, String> playerToCharacterCopy, int randomShiftNumber) {
+		while (randomShiftNumber == 0) {
+			randomShiftNumber = new Random().nextInt((playerToCharacterCopy.size() - 1) + 1);
 		}
 
-		return playerCharacter;
+		List<String> key = new ArrayList<>(playerToCharacterCopy.keySet());
+		List<String> value = new ArrayList<>(playerToCharacterCopy.values());
+
+		Collections.rotate(value, randomShiftNumber);
+
+		playerToCharacterCopy = IntStream.range(0, playerToCharacterCopy.size()).boxed()
+				.collect(Collectors.toMap(key::get, value::get));
+
+		return playerToCharacterCopy;
+	}
+
+	private void fillPlayersWithShuffledCharacters(Map<String, String> playerCharacterShuffled) {
+		for (var q : playerCharacterShuffled.entrySet()) {
+			SynchronousPlayer player = new PersistentPlayer(q.getKey());
+			player.setCharacter(q.getValue());
+			this.playersShuffled.put(q.getKey(), player);
+		}
 	}
 
 	private void toPlayerCharacterMap(Map<String, SynchronousPlayer> players) {

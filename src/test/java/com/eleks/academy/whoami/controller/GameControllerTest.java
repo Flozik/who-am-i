@@ -2,7 +2,6 @@ package com.eleks.academy.whoami.controller;
 
 import com.eleks.academy.whoami.configuration.GameControllerAdvice;
 import com.eleks.academy.whoami.core.SynchronousGame;
-import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.impl.PersistentGame;
 import com.eleks.academy.whoami.core.impl.PersistentPlayer;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
@@ -155,7 +154,7 @@ class GameControllerTest {
 		final String id = game.getId();
 
 		var player1 = new PersistentPlayer(newPlayer);
-		var expectedResponse = "{\"name\":\"newPlayer\",\"character\":null,\"question\":null,\"guess\":null}";
+		var expectedResponse = "{\"name\":\"newPlayer\",\"character\":null}";
 
 		when(gameService.enrollToGame(id, newPlayer)).thenReturn(player1);
 

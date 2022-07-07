@@ -29,17 +29,19 @@ public class GameTest {
 
 	@Test
 	void generalGameLoop() {
-		final String player = "p1";
-		var game = gameService.createGame(player, gameRequest);
-		logger.log(Level.INFO, "Current game details: {0}", asJsonString(game));
-		final String id = game.getId();
+		for (int i = 0; i <= 100; i++){
+			final String player = "p1";
+			var game = gameService.createGame(player, gameRequest);
+			logger.log(Level.INFO, "Current game details: {0}", asJsonString(game));
+			final String id = game.getId();
 
-		enrollToGame(id);
+			enrollToGame(id);
 
-		suggestCharacter(id);
+			suggestCharacter(id);
 
-		var startedGame = gameService.startGame(id, player);
-		logger.log(Level.INFO, "Current game details after start: {0}", asJsonStringOptionalGameDetails(startedGame));
+			var startedGame = gameService.startGame(id, player);
+			logger.log(Level.INFO, "Current game details after start: {0}", asJsonStringOptionalGameDetails(startedGame));
+		}
 
 		// TODO: create method firstTurn with parameter id for a game after starting
 	}
@@ -75,7 +77,7 @@ public class GameTest {
 		CharacterSuggestion character4 = new CharacterSuggestion();
 
 		character1.setCharacter("C1");
-		character2.setCharacter("C2");
+		character2.setCharacter("C1");
 		character3.setCharacter("C3");
 		character4.setCharacter("C4");
 
