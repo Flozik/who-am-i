@@ -72,13 +72,13 @@ public final class SuggestingCharacters extends AbstractGameState {
 		do {
 			playerCharacterShuffled = shuffledCharacters(playerToCharacterCopy);
 			countShuffledCharacters++;
-			if (atLeastOneEqual(playerToCharacterCopy, playerCharacterShuffled)) {
+			if (areNotEqual(playerToCharacterCopy, playerCharacterShuffled)) {
 				break;
 			}
 		} while (countShuffledCharacters != FAILED_ATTEMPTS_SHUFFLED);
 
 		if (countShuffledCharacters == FAILED_ATTEMPTS_SHUFFLED) {
-			playerCharacterShuffled = moveCharacters(playerToCharacterCopy,
+			playerCharacterShuffled = shitftCharactersBy(playerToCharacterCopy,
 					new Random().nextInt(playerToCharacterCopy.size() - 1) + 1);
 		}
 
@@ -99,7 +99,7 @@ public final class SuggestingCharacters extends AbstractGameState {
 		return playerCharacter;
 	}
 
-	private boolean atLeastOneEqual(Map<String, String> oldPlayerCharacter, Map<String, String> playerCharacterShuffled) {
+	private boolean areNotEqual(Map<String, String> oldPlayerCharacter, Map<String, String> playerCharacterShuffled) {
 		int countEquals = 0;
 
 		for (Map.Entry<String, String> entry : oldPlayerCharacter.entrySet()) {
@@ -113,10 +113,10 @@ public final class SuggestingCharacters extends AbstractGameState {
 			}
 		}
 
-		return countEquals <= 0;
+		return countEquals == 0;
 	}
 
-	private Map<String, String> moveCharacters(Map<String, String> playerToCharacterCopy, int randomShiftNumber) {
+	private Map<String, String> shitftCharactersBy(Map<String, String> playerToCharacterCopy, int randomShiftNumber) {
 		List<String> key = new ArrayList<>(playerToCharacterCopy.keySet());
 		List<String> value = new ArrayList<>(playerToCharacterCopy.values());
 
