@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -20,11 +19,19 @@ public class SuggestingCharacterTest {
 			SynchronousPlayer player2 = new PersistentPlayer("Player2");
 			SynchronousPlayer player3 = new PersistentPlayer("Player3");
 			SynchronousPlayer player4 = new PersistentPlayer("Player4");
+			SynchronousPlayer player5 = new PersistentPlayer("Player1");
+			SynchronousPlayer player6 = new PersistentPlayer("Player2");
+			SynchronousPlayer player7 = new PersistentPlayer("Player3");
+			SynchronousPlayer player8 = new PersistentPlayer("Player4");
 
 			player1.setCharacter("Character1");
 			player2.setCharacter("Character2");
 			player3.setCharacter("Character3");
 			player4.setCharacter("Character4");
+			player5.setCharacter("Character1");
+			player6.setCharacter("Character2");
+			player7.setCharacter("Character3");
+			player8.setCharacter("Character4");
 
 			players.put("Player1", player1);
 			players.put("Player2", player2);
@@ -32,20 +39,19 @@ public class SuggestingCharacterTest {
 			players.put("Player4", player4);
 
 			var characters = new SuggestingCharacters(players);
-			characters.next();
 
-			Map<String, String> inputPlayersAndCharacters = new HashMap<>(4);
-			inputPlayersAndCharacters.put("Player1", "Character1");
-			inputPlayersAndCharacters.put("Player2", "Character2");
-			inputPlayersAndCharacters.put("Player3", "Character3");
-			inputPlayersAndCharacters.put("Player4", "Character4");
+			Map<String, SynchronousPlayer> inputPlayersAndCharacters = new HashMap<>(4);
+			inputPlayersAndCharacters.put("Player1", player5);
+			inputPlayersAndCharacters.put("Player2", player6);
+			inputPlayersAndCharacters.put("Player3", player7);
+			inputPlayersAndCharacters.put("Player4", player8);
 
 			var result = characters.assignCharacters();
 
-			for (Map.Entry<String, String> entry : inputPlayersAndCharacters.entrySet()) {
+			for (Map.Entry<String, SynchronousPlayer> entry : inputPlayersAndCharacters.entrySet()) {
 				String key = entry.getKey();
-				String val1 = entry.getValue();
-				String val2 = result.get(key);
+				String val1 = entry.getValue().getCharacter();
+				String val2 = result.get(key).getCharacter();
 
 				assertNotEquals(val1, val2);
 			}
@@ -60,11 +66,19 @@ public class SuggestingCharacterTest {
 			SynchronousPlayer player2 = new PersistentPlayer("Player2");
 			SynchronousPlayer player3 = new PersistentPlayer("Player3");
 			SynchronousPlayer player4 = new PersistentPlayer("Player4");
+			SynchronousPlayer player5 = new PersistentPlayer("Player1");
+			SynchronousPlayer player6 = new PersistentPlayer("Player2");
+			SynchronousPlayer player7 = new PersistentPlayer("Player3");
+			SynchronousPlayer player8 = new PersistentPlayer("Player4");
 
 			player1.setCharacter("Character1");
-			player2.setCharacter("Character2");
-			player3.setCharacter("Character3");
+			player2.setCharacter("Character1");
+			player3.setCharacter("Character1");
 			player4.setCharacter("Character4");
+			player5.setCharacter("Character1");
+			player6.setCharacter("Character1");
+			player7.setCharacter("Character1");
+			player8.setCharacter("Character4");
 
 			players.put("Player1", player1);
 			players.put("Player2", player2);
@@ -73,24 +87,18 @@ public class SuggestingCharacterTest {
 
 			var characters = new SuggestingCharacters(players);
 
-			final Map<String, String> playerCharacterMap = new HashMap<>();
+			final Map<String, SynchronousPlayer> playerCharacterMap = new HashMap<>();
+			playerCharacterMap.put("Player1", player5);
+			playerCharacterMap.put("Player2", player6);
+			playerCharacterMap.put("Player3", player7);
+			playerCharacterMap.put("Player4", player8);
 
-			for (SynchronousPlayer nextPlayer : players.values()) {
-				playerCharacterMap.put(nextPlayer.getName(), nextPlayer.getCharacter());
-			}
+			var result = characters.assignCharacters();
 
-			var randomShiftNumber = new Random()
-					.nextInt((playerCharacterMap.size() - 1) + 1);
+			String enteredPlayer = playerCharacterMap.get("Player4").getCharacter();
+			String movedPlayer = result.get("Player4").getCharacter();
 
-			var movedCharacters = characters.moveCharacters(playerCharacterMap, randomShiftNumber);
-
-			for (Map.Entry<String, String> entry : playerCharacterMap.entrySet()) {
-				String key = entry.getKey();
-				String val1 = entry.getValue();
-				String val2 = movedCharacters.get(key);
-
-				assertNotEquals(val1, val2);
-			}
+			assertNotEquals(enteredPlayer, movedPlayer);
 		}
 	}
 

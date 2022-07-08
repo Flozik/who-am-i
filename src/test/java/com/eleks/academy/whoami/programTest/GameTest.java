@@ -6,12 +6,9 @@ import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.repository.impl.GameInMemoryRepository;
 import com.eleks.academy.whoami.service.GameService;
 import com.eleks.academy.whoami.service.impl.GameServiceImpl;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +17,6 @@ public class GameTest {
 	private final GameInMemoryRepository repository = new GameInMemoryRepository();
 	private final GameService gameService = new GameServiceImpl(repository);
 	private final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@BeforeEach
 	public void setMockMvc() {
@@ -29,10 +25,10 @@ public class GameTest {
 
 	@Test
 	void generalGameLoop() {
-		for (int i = 0; i <= 100; i++){
+		for (int i = 0; i <= 100; i++) {
 			final String player = "p1";
 			var game = gameService.createGame(player, gameRequest);
-			logger.log(Level.INFO, "Current game details: {0}", asJsonString(game));
+			logger.log(Level.INFO, "Current game details:\n{0}", game);
 			final String id = game.getId();
 
 			enrollToGame(id);
@@ -40,25 +36,10 @@ public class GameTest {
 			suggestCharacter(id);
 
 			var startedGame = gameService.startGame(id, player);
-			logger.log(Level.INFO, "Current game details after start: {0}", asJsonStringOptionalGameDetails(startedGame));
+			logger.log(Level.INFO, "Current game details after start:\n{0}", startedGame);
 		}
 
 		// TODO: create method firstTurn with parameter id for a game after starting
-	}
-
-	private String asJsonString(GameDetails gameDetails) {
-		try {
-			return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(gameDetails);
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	private String asJsonStringOptionalGameDetails(Optional<GameDetails> op) {
-		try {
-			return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(op.get());
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	private void enrollToGame(String gameId) {
@@ -66,8 +47,8 @@ public class GameTest {
 		gameService.enrollToGame(gameId, "p3");
 		gameService.enrollToGame(gameId, "p4");
 
-		logger.log(Level.INFO, "Current game details after all Players enrolled to the game {0}",
-				asJsonString(GameDetails.of(repository.findById(gameId).orElseThrow())));
+		logger.log(Level.INFO, "Current game details after all Players enrolled to the game:\n{0}",
+				GameDetails.of(repository.findById(gameId).orElseThrow()));
 	}
 
 	private void suggestCharacter(String gameId) {
@@ -86,8 +67,8 @@ public class GameTest {
 		gameService.suggestCharacter(gameId, "p3", character3);
 		gameService.suggestCharacter(gameId, "p4", character4);
 
-		logger.log(Level.INFO, "Current game details after all Players suggest the character {0}",
-				asJsonString(GameDetails.of(repository.findById(gameId).orElseThrow())));
+		logger.log(Level.INFO, "Current game details after all Players suggest the character:\n{0}",
+				GameDetails.of(repository.findById(gameId).orElseThrow()));
 	}
 
 }
