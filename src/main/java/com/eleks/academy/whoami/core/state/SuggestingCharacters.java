@@ -3,6 +3,7 @@ package com.eleks.academy.whoami.core.state;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.exception.GameException;
 import com.eleks.academy.whoami.enums.GameStatus;
+import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -78,7 +79,7 @@ public final class SuggestingCharacters extends AbstractGameState {
 		} while (countShuffledCharacters != FAILED_ATTEMPTS_SHUFFLED);
 
 		if (countShuffledCharacters == FAILED_ATTEMPTS_SHUFFLED) {
-			playerCharacterShuffled = shitftCharactersBy(playerToCharacterCopy,
+			playerCharacterShuffled = shiftCharactersBy(playerToCharacterCopy,
 					new Random().nextInt(playerToCharacterCopy.size() - 1) + 1);
 		}
 
@@ -116,7 +117,7 @@ public final class SuggestingCharacters extends AbstractGameState {
 		return countEquals == 0;
 	}
 
-	private Map<String, String> shitftCharactersBy(Map<String, String> playerToCharacterCopy, int randomShiftNumber) {
+	private Map<String, String> shiftCharactersBy(Map<String, String> playerToCharacterCopy, int randomShiftNumber) {
 		List<String> key = new ArrayList<>(playerToCharacterCopy.keySet());
 		List<String> value = new ArrayList<>(playerToCharacterCopy.values());
 
@@ -131,7 +132,10 @@ public final class SuggestingCharacters extends AbstractGameState {
 	private void fillPlayersWithShuffledCharacters(Map<String, SynchronousPlayer> players,
 												   Map<String, String> playerCharacterShuffled) {
 		for (var playerCharacters : playerCharacterShuffled.entrySet()) {
-			players.get(playerCharacters.getKey()).setCharacter(playerCharacters.getValue());
+			CharacterSuggestion suggestion = new CharacterSuggestion();
+			suggestion.setCharacter(playerCharacters.getValue());
+			suggestion.setNickName(this.players.get(playerCharacters.getKey()).getNickName());
+			players.get(playerCharacters.getKey()).suggestCharacterAndNickName(suggestion);
 		}
 	}
 

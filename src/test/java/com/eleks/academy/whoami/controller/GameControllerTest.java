@@ -94,7 +94,8 @@ class GameControllerTest {
 								.header("X-Player", "player")
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\n" +
-										"    \"character\": \" char\"\n" +
+										"    \"character\": \" char\",\n" +
+										"\"nickName\": \"nick\"" +
 										"}"))
 				.andExpect(status().isOk());
 		verify(gameService, times(1)).suggestCharacter(eq("1234"), eq("player"), any(CharacterSuggestion.class));
@@ -149,11 +150,12 @@ class GameControllerTest {
 	void enrollToGameTest() throws Exception {
 		final String hostPlayer = "hostPlayer";
 		final String newPlayer = "newPlayer";
+		final String nickName = "nickName";
 
 		SynchronousGame game = new PersistentGame(hostPlayer, gameRequest.getMaxPlayers());
 		final String id = game.getId();
 
-		var player1 = new PersistentPlayer(newPlayer);
+		var player1 = new PersistentPlayer(newPlayer, nickName);
 		var expectedResponse = "{\"name\":\"newPlayer\",\"character\":null}";
 
 		when(gameService.enrollToGame(id, newPlayer)).thenReturn(player1);

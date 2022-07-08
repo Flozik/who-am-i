@@ -61,6 +61,10 @@ public class GameTest {
 		character2.setCharacter("C1");
 		character3.setCharacter("C3");
 		character4.setCharacter("C4");
+		character1.setNickName("NickName1");
+		character2.setNickName("NickName2");
+		character3.setNickName("NickName3");
+		character4.setNickName("NickName4");
 
 		gameService.suggestCharacter(gameId, "p1", character1);
 		gameService.suggestCharacter(gameId, "p2", character2);

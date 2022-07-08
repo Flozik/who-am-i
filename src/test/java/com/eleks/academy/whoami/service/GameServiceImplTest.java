@@ -1,13 +1,15 @@
 package com.eleks.academy.whoami.service;
 
 import com.eleks.academy.whoami.core.SynchronousGame;
-import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.impl.PersistentGame;
 import com.eleks.academy.whoami.core.impl.PersistentPlayer;
 import com.eleks.academy.whoami.enums.GameStatus;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
-import com.eleks.academy.whoami.model.response.*;
+import com.eleks.academy.whoami.model.response.GameDetails;
+import com.eleks.academy.whoami.model.response.GameLight;
+import com.eleks.academy.whoami.model.response.PlayerState;
+import com.eleks.academy.whoami.model.response.PlayerWithState;
 import com.eleks.academy.whoami.repository.GameRepository;
 import com.eleks.academy.whoami.service.impl.GameServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,10 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -65,6 +64,7 @@ public class GameServiceImplTest {
 	void createGameTest() {
 		final String idNaming = "id";
 		final String player = "player";
+		final String nickName = "Player 1";
 		final GameStatus expectedGameStatus = WAITING_FOR_PLAYERS;
 
 		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
@@ -75,7 +75,7 @@ public class GameServiceImplTest {
 
 		var expectedGame = GameDetails.builder()
 				.status(expectedGameStatus)
-				.players(List.of(new PlayerWithState(new PersistentPlayer(player), PlayerState.READY)))
+				.players(List.of(new PlayerWithState(new PersistentPlayer(player, nickName), PlayerState.READY)))
 				.build();
 
 		assertThat(gameDetails)
@@ -92,6 +92,7 @@ public class GameServiceImplTest {
 	@Test
 	void findByIdAndPlayerTest() {
 		final String player = "player";
+		final String nickName = "nickName";
 		final GameStatus expectedGameStatus = WAITING_FOR_PLAYERS;
 
 		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
@@ -105,7 +106,7 @@ public class GameServiceImplTest {
 		var expectedGame = GameDetails.builder()
 				.id(foundGame.get().getId())
 				.status(expectedGameStatus)
-				.players(List.of(new PlayerWithState(new PersistentPlayer(player), PlayerState.READY)))
+				.players(List.of(new PlayerWithState(new PersistentPlayer(player, nickName), PlayerState.READY)))
 				.build();
 		Optional<GameDetails> expectedGameOp = Optional.of(expectedGame);
 
@@ -138,6 +139,7 @@ public class GameServiceImplTest {
 	void enrollToGameTest() {
 		final String player = "player";
 		final String newPlayer = "newPlayer";
+		final String nickName = "nickName";
 
 		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
 		Optional<SynchronousGame> createdGame = Optional.of(game);
@@ -146,7 +148,7 @@ public class GameServiceImplTest {
 		when(gameRepository.findById(id)).thenReturn(createdGame);
 
 		var enrolledPlayer = gameService.enrollToGame(id, newPlayer);
-		var expectedPlayer = new PersistentPlayer(newPlayer);
+		var expectedPlayer = new PersistentPlayer(newPlayer, nickName);
 
 		assertEquals(enrolledPlayer, expectedPlayer);
 	}
@@ -154,7 +156,8 @@ public class GameServiceImplTest {
 	@Test
 	void suggestCharacterWhenGameIsNotFoundTest() {
 		final String player = "Player1";
-		CharacterSuggestion suggestion = new CharacterSuggestion("Bet Monkey");
+		CharacterSuggestion suggestion = new CharacterSuggestion();
+		suggestion.setCharacter("Bet Monkey");
 
 		SynchronousGame game = new PersistentGame(player, 4);
 		game.enrollToGame("Player2");
@@ -172,7 +175,8 @@ public class GameServiceImplTest {
 	@Test
 	void suggestCharacterWhenPLayerIsNotFoundTest() {
 		final String player = "Player1";
-		CharacterSuggestion suggestion = new CharacterSuggestion("Bet Monkey");
+		CharacterSuggestion suggestion = new CharacterSuggestion();
+		suggestion.setCharacter("Bet Monkey");
 
 		SynchronousGame game = new PersistentGame(player, 4);
 		final String id = game.getId();

@@ -27,6 +27,7 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	private final Lock turnLock = new ReentrantLock();
 	private final String id;
+	private int number = 0;
 
 	private final Queue<GameState> currentState = new LinkedBlockingQueue<>();
 
@@ -45,8 +46,8 @@ public class PersistentGame implements Game, SynchronousGame {
 		currentState.add(gameState);
 		GameState state = currentState.peek();
 
-		var newPlayer = new PersistentPlayer(hostPlayer);
-		((WaitingForPlayers)state).addPlayer(newPlayer);
+		var newPlayer = new PersistentPlayer(hostPlayer, generateNickName());
+		((WaitingForPlayers) state).addPlayer(newPlayer);
 	}
 
 	@Override
@@ -66,8 +67,8 @@ public class PersistentGame implements Game, SynchronousGame {
 		if (checkState.equals(GameStatus.WAITING_FOR_PLAYERS)) {
 			GameState state = currentState.peek();
 
-			var newPlayer = new PersistentPlayer(player);
-			var addedPlayer = ((WaitingForPlayers)state).addPlayer(newPlayer);
+			var newPlayer = new PersistentPlayer(player, generateNickName());
+			var addedPlayer = ((WaitingForPlayers) state).addPlayer(newPlayer);
 
 			if (currentState.peek().getPlayersInGame() == 4) {
 				currentState.add(currentState.peek().next());
@@ -154,6 +155,10 @@ public class PersistentGame implements Game, SynchronousGame {
 		while (!(this.currentState.peek() instanceof GameFinished)) {
 			this.makeTurn();
 		}
+	}
+
+	private String generateNickName() {
+		return "Player " + (++number);
 	}
 
 	private <T, R> R applyIfPresent(T source, Function<T, R> mapper) {

@@ -62,7 +62,8 @@ public class GameServiceImpl implements GameService {
 		this.gameRepository.findById(id)
 				.filter(SynchronousGame::isAvailableToSuggestCharecter)
 				.map(game -> game.findPlayer(player))
-				.ifPresentOrElse(p -> p.ifPresentOrElse(suggest -> suggest.setCharacter(suggestion.getCharacter()),
+//				.ifPresentOrElse(p -> p.ifPresentOrElse(suggest -> suggest.setCharacter(suggestion.getCharacter()),
+				.ifPresentOrElse(p -> p.ifPresentOrElse(suggest -> suggest.suggestCharacterAndNickName(suggestion),
 								() -> {
 									throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Player not found");
 								}
