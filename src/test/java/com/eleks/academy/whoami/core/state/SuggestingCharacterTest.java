@@ -16,14 +16,14 @@ public class SuggestingCharacterTest {
 	void assignCharactersTest() {
 		for (int i = 0; i <= 100; i++) {
 			Map<String, SynchronousPlayer> players = new HashMap<>(4);
-			SynchronousPlayer player1 = new PersistentPlayer("Player1", "nickName1");
-			SynchronousPlayer player2 = new PersistentPlayer("Player2", "nickName2");
-			SynchronousPlayer player3 = new PersistentPlayer("Player3", "nickName3");
-			SynchronousPlayer player4 = new PersistentPlayer("Player4", "nickName4");
-			SynchronousPlayer player5 = new PersistentPlayer("Player1", "nickName5");
-			SynchronousPlayer player6 = new PersistentPlayer("Player2", "nickName6");
-			SynchronousPlayer player7 = new PersistentPlayer("Player3", "nickName7");
-			SynchronousPlayer player8 = new PersistentPlayer("Player4", "nickName8");
+			SynchronousPlayer player1 = new PersistentPlayer("Player1");
+			SynchronousPlayer player2 = new PersistentPlayer("Player2");
+			SynchronousPlayer player3 = new PersistentPlayer("Player3");
+			SynchronousPlayer player4 = new PersistentPlayer("Player4");
+			SynchronousPlayer player5 = new PersistentPlayer("Player1");
+			SynchronousPlayer player6 = new PersistentPlayer("Player2");
+			SynchronousPlayer player7 = new PersistentPlayer("Player3");
+			SynchronousPlayer player8 = new PersistentPlayer("Player4");
 
 			CharacterSuggestion suggestion1 = new CharacterSuggestion();
 			suggestion1.setCharacter("Character1");
@@ -50,14 +50,14 @@ public class SuggestingCharacterTest {
 			suggestion8.setCharacter("Character8");
 			suggestion8.setNickName("NickName8");
 
-			player1.suggestCharacterAndNickName(suggestion1);
-			player2.suggestCharacterAndNickName(suggestion2);
-			player3.suggestCharacterAndNickName(suggestion3);
-			player4.suggestCharacterAndNickName(suggestion4);
-			player5.suggestCharacterAndNickName(suggestion5);
-			player6.suggestCharacterAndNickName(suggestion6);
-			player7.suggestCharacterAndNickName(suggestion7);
-			player8.suggestCharacterAndNickName(suggestion8);
+			player1.suggestCharacter(suggestion1);
+			player2.suggestCharacter(suggestion2);
+			player3.suggestCharacter(suggestion3);
+			player4.suggestCharacter(suggestion4);
+			player5.suggestCharacter(suggestion5);
+			player6.suggestCharacter(suggestion6);
+			player7.suggestCharacter(suggestion7);
+			player8.suggestCharacter(suggestion8);
 
 			players.put("Player1", player1);
 			players.put("Player2", player2);
@@ -88,14 +88,14 @@ public class SuggestingCharacterTest {
 	void moveCharactersTest() {
 		for (int i = 0; i <= 100; i++) {
 			Map<String, SynchronousPlayer> players = new HashMap<>(4);
-			SynchronousPlayer player1 = new PersistentPlayer("Player1", "nickName1");
-			SynchronousPlayer player2 = new PersistentPlayer("Player2", "nickName2");
-			SynchronousPlayer player3 = new PersistentPlayer("Player3", "nickName3");
-			SynchronousPlayer player4 = new PersistentPlayer("Player4", "nickName4");
-			SynchronousPlayer player5 = new PersistentPlayer("Player1", "nickName5");
-			SynchronousPlayer player6 = new PersistentPlayer("Player2", "nickName6");
-			SynchronousPlayer player7 = new PersistentPlayer("Player3", "nickName7");
-			SynchronousPlayer player8 = new PersistentPlayer("Player4", "nickName8");
+			SynchronousPlayer player1 = new PersistentPlayer("Player1");
+			SynchronousPlayer player2 = new PersistentPlayer("Player2");
+			SynchronousPlayer player3 = new PersistentPlayer("Player3");
+			SynchronousPlayer player4 = new PersistentPlayer("Player4");
+			SynchronousPlayer player5 = new PersistentPlayer("Player1");
+			SynchronousPlayer player6 = new PersistentPlayer("Player2");
+			SynchronousPlayer player7 = new PersistentPlayer("Player3");
+			SynchronousPlayer player8 = new PersistentPlayer("Player4");
 
 			CharacterSuggestion suggestion1 = new CharacterSuggestion();
 			suggestion1.setCharacter("Character1");
@@ -122,14 +122,14 @@ public class SuggestingCharacterTest {
 			suggestion8.setCharacter("Character8");
 			suggestion8.setNickName("NickName8");
 
-			player1.suggestCharacterAndNickName(suggestion1);
-			player2.suggestCharacterAndNickName(suggestion2);
-			player3.suggestCharacterAndNickName(suggestion3);
-			player4.suggestCharacterAndNickName(suggestion4);
-			player5.suggestCharacterAndNickName(suggestion5);
-			player6.suggestCharacterAndNickName(suggestion6);
-			player7.suggestCharacterAndNickName(suggestion7);
-			player8.suggestCharacterAndNickName(suggestion8);
+			player1.suggestCharacter(suggestion1);
+			player2.suggestCharacter(suggestion2);
+			player3.suggestCharacter(suggestion3);
+			player4.suggestCharacter(suggestion4);
+			player5.suggestCharacter(suggestion5);
+			player6.suggestCharacter(suggestion6);
+			player7.suggestCharacter(suggestion7);
+			player8.suggestCharacter(suggestion8);
 
 			players.put("Player1", player1);
 			players.put("Player2", player2);

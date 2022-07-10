@@ -10,6 +10,6 @@ public interface SynchronousPlayer {
 
 	String getCharacter();
 
-	String suggestCharacterAndNickName(CharacterSuggestion suggestion);
+	void suggestCharacter(CharacterSuggestion suggestion);
 
 }

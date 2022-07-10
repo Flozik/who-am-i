@@ -6,9 +6,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class PersistentPlayerTest {
-	final private PersistentPlayer player = new PersistentPlayer("Taras", "nickName");
+	final private PersistentPlayer player = new PersistentPlayer("Taras");
 
 	@Test
 	void getNameTest() {
@@ -26,11 +27,13 @@ class PersistentPlayerTest {
 		assertThat(getNull).isEqualTo(null);
 
 		CharacterSuggestion suggestion = new CharacterSuggestion();
+		suggestion.setNickName("nickName");
 		suggestion.setCharacter("character");
 
-		var setChar = player.suggestCharacterAndNickName(suggestion);
-		var getChar = player.getCharacter();
-		assertEquals(getChar, setChar);
+		String expectedCharacter = "character";
+		player.suggestCharacter(suggestion);
+
+		assertEquals(player.getCharacter(), expectedCharacter);
 	}
 
 }

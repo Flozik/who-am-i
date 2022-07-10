@@ -135,7 +135,7 @@ public final class SuggestingCharacters extends AbstractGameState {
 			CharacterSuggestion suggestion = new CharacterSuggestion();
 			suggestion.setCharacter(playerCharacters.getValue());
 			suggestion.setNickName(this.players.get(playerCharacters.getKey()).getNickName());
-			players.get(playerCharacters.getKey()).suggestCharacterAndNickName(suggestion);
+			players.get(playerCharacters.getKey()).suggestCharacter(suggestion);
 		}
 	}
 

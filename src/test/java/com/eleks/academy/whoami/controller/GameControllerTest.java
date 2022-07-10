@@ -150,12 +150,11 @@ class GameControllerTest {
 	void enrollToGameTest() throws Exception {
 		final String hostPlayer = "hostPlayer";
 		final String newPlayer = "newPlayer";
-		final String nickName = "nickName";
 
 		SynchronousGame game = new PersistentGame(hostPlayer, gameRequest.getMaxPlayers());
 		final String id = game.getId();
 
-		var player1 = new PersistentPlayer(newPlayer, nickName);
+		var player1 = new PersistentPlayer(newPlayer);
 		var expectedResponse = "{\"name\":\"newPlayer\",\"character\":null}";
 
 		when(gameService.enrollToGame(id, newPlayer)).thenReturn(player1);

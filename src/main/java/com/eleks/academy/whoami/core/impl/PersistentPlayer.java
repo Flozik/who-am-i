@@ -11,12 +11,13 @@ public class PersistentPlayer implements SynchronousPlayer {
 
 	@EqualsAndHashCode.Include
 	private final String name;
+	@EqualsAndHashCode.Include
 	private String nickName;
+	@EqualsAndHashCode.Include
 	private String character;
 
-	public PersistentPlayer(String name, String nickName) {
+	public PersistentPlayer(String name) {
 		this.name = Objects.requireNonNull(name);
-		this.nickName = Objects.requireNonNull(nickName);
 	}
 
 	@Override
@@ -29,28 +30,15 @@ public class PersistentPlayer implements SynchronousPlayer {
 		return this.nickName;
 	}
 
-	private void setNickName(String nickName) {
-		this.nickName = nickName;
-	}
-
-	private void setCharacter(String character) {
-		this.character = character;
-	}
-
 	@Override
 	public String getCharacter() {
 		return character;
 	}
 
 	@Override
-	public String suggestCharacterAndNickName(CharacterSuggestion suggestion) {
-		if (suggestion.getCharacter() != null) {
-			setNickName(suggestion.getNickName());
-			setCharacter(suggestion.getCharacter());
-		} else {
-			throw new IllegalStateException("Character has already been suggested!");
-		}
-		return suggestion.getCharacter();
+	public void suggestCharacter(CharacterSuggestion suggestion) {
+		this.nickName = suggestion.getNickName();
+		this.character = suggestion.getCharacter();
 	}
 
 }

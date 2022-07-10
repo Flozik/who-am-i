@@ -64,7 +64,6 @@ public class GameServiceImplTest {
 	void createGameTest() {
 		final String idNaming = "id";
 		final String player = "player";
-		final String nickName = "Player 1";
 		final GameStatus expectedGameStatus = WAITING_FOR_PLAYERS;
 
 		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
@@ -75,7 +74,7 @@ public class GameServiceImplTest {
 
 		var expectedGame = GameDetails.builder()
 				.status(expectedGameStatus)
-				.players(List.of(new PlayerWithState(new PersistentPlayer(player, nickName), PlayerState.READY)))
+				.players(List.of(new PlayerWithState(new PersistentPlayer(player), PlayerState.READY)))
 				.build();
 
 		assertThat(gameDetails)
@@ -92,7 +91,6 @@ public class GameServiceImplTest {
 	@Test
 	void findByIdAndPlayerTest() {
 		final String player = "player";
-		final String nickName = "nickName";
 		final GameStatus expectedGameStatus = WAITING_FOR_PLAYERS;
 
 		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
@@ -106,7 +104,7 @@ public class GameServiceImplTest {
 		var expectedGame = GameDetails.builder()
 				.id(foundGame.get().getId())
 				.status(expectedGameStatus)
-				.players(List.of(new PlayerWithState(new PersistentPlayer(player, nickName), PlayerState.READY)))
+				.players(List.of(new PlayerWithState(new PersistentPlayer(player), PlayerState.READY)))
 				.build();
 		Optional<GameDetails> expectedGameOp = Optional.of(expectedGame);
 
@@ -139,7 +137,6 @@ public class GameServiceImplTest {
 	void enrollToGameTest() {
 		final String player = "player";
 		final String newPlayer = "newPlayer";
-		final String nickName = "nickName";
 
 		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
 		Optional<SynchronousGame> createdGame = Optional.of(game);
@@ -148,7 +145,7 @@ public class GameServiceImplTest {
 		when(gameRepository.findById(id)).thenReturn(createdGame);
 
 		var enrolledPlayer = gameService.enrollToGame(id, newPlayer);
-		var expectedPlayer = new PersistentPlayer(newPlayer, nickName);
+		var expectedPlayer = new PersistentPlayer(newPlayer);
 
 		assertEquals(enrolledPlayer, expectedPlayer);
 	}
@@ -169,7 +166,6 @@ public class GameServiceImplTest {
 				gameService.suggestCharacter("id", "Player4", suggestion));
 
 		assertEquals("404 Game not found", responseStatusException.getMessage());
-
 	}
 
 	@Test
@@ -184,14 +180,51 @@ public class GameServiceImplTest {
 		game.enrollToGame("Player3");
 		game.enrollToGame("Player4");
 
-
 		when(gameRepository.findById(id)).thenReturn(Optional.of(game));
 
 		HttpClientErrorException responseStatusException = assertThrows(HttpClientErrorException.class, () ->
 				gameService.suggestCharacter(id, "Player5", suggestion));
 
 		assertEquals("404 Player not found", responseStatusException.getMessage());
+	}
 
+	@Test
+	void startGameTest() {
+		final String player = "player1";
+
+		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
+		final String id = game.getId();
+
+		Optional<SynchronousGame> op = Optional.of(game);
+
+		when(gameRepository.findById(eq(id))).thenReturn(op);
+
+		gameService.enrollToGame(id, "player2");
+		gameService.enrollToGame(id, "player3");
+		gameService.enrollToGame(id, "player4");
+
+		CharacterSuggestion suggestion1 = new CharacterSuggestion();
+		suggestion1.setCharacter("Character1");
+		suggestion1.setNickName("NickName1");
+		CharacterSuggestion suggestion2 = new CharacterSuggestion();
+		suggestion2.setCharacter("Character2");
+		suggestion2.setNickName("NickName2");
+		CharacterSuggestion suggestion3 = new CharacterSuggestion();
+		suggestion3.setCharacter("Character3");
+		suggestion3.setNickName("NickName3");
+		CharacterSuggestion suggestion4 = new CharacterSuggestion();
+		suggestion4.setCharacter("Character4");
+		suggestion4.setNickName("NickName4");
+
+		gameService.suggestCharacter(id, player, suggestion1);
+		gameService.suggestCharacter(id, "player2", suggestion2);
+		gameService.suggestCharacter(id, "player3", suggestion3);
+		gameService.suggestCharacter(id, "player4", suggestion4);
+
+		var startGame = gameService.startGame(id, player);
+		String expectedGame = startGame.get().toString();
+
+		assertEquals(startGame.get().toString(), expectedGame);
 	}
 
 }
