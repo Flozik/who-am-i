@@ -6,14 +6,11 @@ import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 public class PersistentPlayer implements SynchronousPlayer {
 
-	@EqualsAndHashCode.Include
 	private final String name;
-	@EqualsAndHashCode.Include
 	private String nickName;
-	@EqualsAndHashCode.Include
 	private String character;
 
 	public PersistentPlayer(String name) {
