@@ -211,7 +211,7 @@ paths:
               $ref: '#/components/schemas/Message'      
       responses:
         '200':
-          description: No response data in case succesful request
+          description: No response data in case successful request
   /games/{id}/guess:
     post:
       tags:
@@ -239,7 +239,7 @@ paths:
               $ref: '#/components/schemas/Message'      
       responses:
         '200':
-          description: No response data in case succesful request
+          description: No response data in case successful request
   /games/{id}/answer:
     post:
       tags:
@@ -267,7 +267,7 @@ paths:
               $ref: '#/components/schemas/Message'      
       responses:
         '200':
-          description: No response data in case succesful request
+          description: No response data in case successful request
   /games/{id}/leave:
     post:
       tags:
@@ -288,7 +288,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Returns leaved player
+          description: No response data in case successful request
     
 #  ----- Components  ----------------------------------------           
 components:                 
