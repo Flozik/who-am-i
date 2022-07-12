@@ -5,6 +5,7 @@ import com.eleks.academy.whoami.core.SynchronousGame;
 import com.eleks.academy.whoami.core.impl.PersistentGame;
 import com.eleks.academy.whoami.core.impl.PersistentPlayer;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
+import com.eleks.academy.whoami.model.request.Message;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.service.impl.GameServiceImpl;
@@ -191,6 +192,26 @@ class GameControllerTest {
 				.andExpect(content().json(expectedResponse));
 
 		verify(gameService, times(1)).startGame(id, player);
+	}
+
+	@Test
+	void askQuestionTest() throws Exception {
+		final Message messageModel = new Message("question Example?");
+		var message = messageModel.getMessage();
+
+		doNothing().when(gameService).askQuestion(eq("Game Id"), eq("player"), eq(message));
+
+		this.mockMvc.perform(
+						MockMvcRequestBuilders.post("/games/Game Id/questions")
+								.header("X-Player", "player")
+								.contentType(MediaType.APPLICATION_JSON)
+								.content("{\n" +
+										"    \"message\": \"question Example?\" \n" +
+										"}"))
+				.andExpect(status().isOk());
+		verify(gameService, times(1))
+				.askQuestion(eq("Game Id"), eq("player"), eq(message));
+
 	}
 
 }
