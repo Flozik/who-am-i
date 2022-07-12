@@ -186,6 +186,7 @@ class GameControllerTest {
 						MockMvcRequestBuilders.post("/games/{id}", id)
 								.header("X-Player", player)
 								.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(content().json(expectedResponse));
 
