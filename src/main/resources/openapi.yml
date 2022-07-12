@@ -267,7 +267,28 @@ paths:
               $ref: '#/components/schemas/Message'      
       responses:
         '200':
-          description: No response data in case succesful request                                                                           
+          description: No response data in case succesful request
+  /{id}/leave:
+    post:
+      tags:
+        - game
+      description: Leave game
+      operationId: leaveGame
+      parameters:
+        - in: header
+          name: X-Player
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          description: Game id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns leaved player
     
 #  ----- Components  ----------------------------------------           
 components:                 
