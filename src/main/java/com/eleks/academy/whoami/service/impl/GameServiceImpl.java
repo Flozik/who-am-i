@@ -3,6 +3,7 @@ package com.eleks.academy.whoami.service.impl;
 import com.eleks.academy.whoami.core.SynchronousGame;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.impl.PersistentGame;
+import com.eleks.academy.whoami.enums.GameStatus;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
@@ -104,7 +105,11 @@ public class GameServiceImpl implements GameService {
 
 	@Override
 	public void leaveGame(String id, String player) {
-		this.gameRepository.deleteByIdPlayer(id, player);
+		if (gameRepository.findById(id).get().getStatus() == GameStatus.WAITING_FOR_PLAYERS) {
+			gameRepository.findById(id).get().leaveGame(player);
+		} else {
+			this.gameRepository.deleteById(id);
+		}
 	}
 
 }

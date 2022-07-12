@@ -155,7 +155,7 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public void leaveGame(String player) {
-		this.currentState.peek().deletePlayer(player);
+		this.currentState.peek().leavePlayer(player);
 	}
 
 	private <T, R> R applyIfPresent(T source, Function<T, R> mapper) {

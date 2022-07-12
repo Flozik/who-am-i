@@ -28,7 +28,7 @@ public interface GameState {
 	 *
 	 * @param player which we want to remove from game
 	 */
-	void deletePlayer(String player);
+	void leavePlayer(String player);
 
 	/**
 	 * Used for presentation purposes only

@@ -57,7 +57,7 @@ public class AbstractGameStateTest {
 
 		players.put(player, new PersistentPlayer(player));
 
-		state.deletePlayer(player);
+		state.leavePlayer(player);
 
 		assertTrue(players.isEmpty());
 	}

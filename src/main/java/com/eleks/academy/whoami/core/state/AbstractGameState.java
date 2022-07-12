@@ -32,7 +32,7 @@ public abstract class AbstractGameState implements GameState {
 	}
 
 	@Override
-	public void deletePlayer(String player) {
+	public void leavePlayer(String player) {
 		this.players.remove(player);
 	}
 
