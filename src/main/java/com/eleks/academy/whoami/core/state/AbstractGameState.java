@@ -42,8 +42,5 @@ public abstract class AbstractGameState implements GameState {
 	public String getCurrentTurn() {
 		return null;
 	}
-	// TODO: leaveGame
-	// TODO: updateAPI
-	// TODO: test AbstractGameState throw child
 	// TODO: refactor API tests
 }

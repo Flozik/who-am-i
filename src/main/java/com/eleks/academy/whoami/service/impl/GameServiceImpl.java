@@ -104,7 +104,7 @@ public class GameServiceImpl implements GameService {
 
 	@Override
 	public void leaveGame(String id, String player) {
-		this.gameRepository.findById(id);
+		this.gameRepository.deleteByIdPlayer(id, player);
 	}
 
 }

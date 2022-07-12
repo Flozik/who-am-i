@@ -344,6 +344,8 @@ components:
       properties:
         character:
           type: string
+        nickName:
+          type: string
     TurnDetails:
       type: object
       properties:
