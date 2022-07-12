@@ -4,8 +4,6 @@ import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.enums.GameStatus;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 import static com.eleks.academy.whoami.enums.GameStatus.WAITING_FOR_PLAYERS;
 

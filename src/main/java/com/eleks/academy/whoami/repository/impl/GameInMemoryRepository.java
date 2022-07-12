@@ -1,6 +1,7 @@
 package com.eleks.academy.whoami.repository.impl;
 
 import com.eleks.academy.whoami.core.SynchronousGame;
+import com.eleks.academy.whoami.enums.GameStatus;
 import com.eleks.academy.whoami.repository.GameRepository;
 import org.springframework.stereotype.Repository;
 
@@ -43,6 +44,10 @@ public class GameInMemoryRepository implements GameRepository {
 
 	@Override
 	public void deleteByIdPlayer(String id, String player) {
-		this.games.get(id).leaveGame(player);
+		if (this.games.get(id).getStatus() == GameStatus.WAITING_FOR_PLAYERS) {
+			this.games.get(id).leaveGame(player);
+		} else if (this.games.get(id).getStatus() == GameStatus.SUGGESTING_CHARACTERS) {
+			this.games.remove(id);
+		}
 	}
 }
