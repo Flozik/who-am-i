@@ -6,7 +6,7 @@ import com.eleks.academy.whoami.enums.GameStatus;
 import java.util.Map;
 import java.util.Optional;
 
-public sealed interface GameState permits AbstractGameState {
+public interface GameState {
 
 	GameState next();
 

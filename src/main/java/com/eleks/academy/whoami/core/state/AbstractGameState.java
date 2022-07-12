@@ -10,8 +10,7 @@ import java.util.Optional;
 
 @Getter
 @RequiredArgsConstructor
-public abstract sealed class AbstractGameState implements GameState
-		permits SuggestingCharacters, WaitingForPlayers, ProcessingQuestion, GameFinished {
+public abstract class AbstractGameState implements GameState {
 
 	protected final int playersInGame;
 	protected final int maxPlayers;
