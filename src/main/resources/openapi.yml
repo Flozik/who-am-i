@@ -268,7 +268,7 @@ paths:
       responses:
         '200':
           description: No response data in case succesful request
-  /{id}/leave:
+  /games/{id}/leave:
     post:
       tags:
         - game
