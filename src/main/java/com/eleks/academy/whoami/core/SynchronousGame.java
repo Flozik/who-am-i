@@ -20,7 +20,8 @@ public interface SynchronousGame {
 	GameStatus getStatus();
 
 	boolean isAvailable();
-	boolean isAvailableToSuggestCharecter();
+
+	boolean isAvailableToSuggestCharacter();
 
 	String getTurn();
 
@@ -29,4 +30,6 @@ public interface SynchronousGame {
 	void answerQuestion(String player, Answer answer);
 
 	SynchronousGame start();
+
+	void leaveGame(String player);
 }

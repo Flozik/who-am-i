@@ -96,4 +96,10 @@ public class GameController {
 
 	}
 
+	@PostMapping("{id}/leave")
+	public void leaveGame(@PathVariable("id") String id,
+												@RequestHeader(PLAYER) String player) {
+		this.gameService.leaveGame(id, player);
+	}
+
 }

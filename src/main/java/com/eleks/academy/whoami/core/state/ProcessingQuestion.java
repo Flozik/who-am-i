@@ -11,12 +11,9 @@ import java.util.Optional;
 public final class ProcessingQuestion extends AbstractGameState {
 
 	private final String currentPlayer;
-	private final Map<String, SynchronousPlayer> players;
 
 	public ProcessingQuestion(Map<String, SynchronousPlayer> players) {
-		super(players.size(), players.size());
-
-		this.players = players;
+		super(players.size(), players.size(), players);
 
 		this.currentPlayer = players.keySet()
 				.stream()
@@ -30,8 +27,8 @@ public final class ProcessingQuestion extends AbstractGameState {
 	}
 
 	@Override
-	public Optional<SynchronousPlayer> findPlayer(String player) {
-		return Optional.ofNullable(this.players.get(player));
+	public GameStatus getStatus() {
+		return GameStatus.IN_PROGRESS;
 	}
 
 	@Override
@@ -39,13 +36,4 @@ public final class ProcessingQuestion extends AbstractGameState {
 		return this.currentPlayer;
 	}
 
-	@Override
-	public Map<String, SynchronousPlayer> getPlayers() {
-		return this.players;
-	}
-
-	@Override
-	public GameStatus getStatus() {
-		return GameStatus.IN_PROGRESS;
-	}
 }

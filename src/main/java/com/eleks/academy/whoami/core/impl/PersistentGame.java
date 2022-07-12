@@ -25,9 +25,7 @@ import static java.lang.String.format;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class PersistentGame implements Game, SynchronousGame {
 
-	private final Lock turnLock = new ReentrantLock();
 	private final String id;
-	private int number = 0;
 
 	private final Queue<GameState> currentState = new LinkedBlockingQueue<>();
 
@@ -115,7 +113,7 @@ public class PersistentGame implements Game, SynchronousGame {
 	}
 
 	@Override
-	public boolean isAvailableToSuggestCharecter() {
+	public boolean isAvailableToSuggestCharacter() {
 		return this.currentState.peek() instanceof SuggestingCharacters;
 	}
 
@@ -155,6 +153,11 @@ public class PersistentGame implements Game, SynchronousGame {
 		while (!(this.currentState.peek() instanceof GameFinished)) {
 			this.makeTurn();
 		}
+	}
+
+	@Override
+	public void leaveGame(String player) {
+		this.currentState.peek().deletePlayer(player);
 	}
 
 	private <T, R> R applyIfPresent(T source, Function<T, R> mapper) {

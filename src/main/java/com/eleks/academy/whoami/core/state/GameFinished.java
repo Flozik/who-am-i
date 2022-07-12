@@ -7,8 +7,12 @@ import java.util.Optional;
 
 public final class GameFinished extends AbstractGameState {
 
-	public GameFinished(int playersInGame, int maxPlayers) {
-		super(playersInGame, maxPlayers);
+	// TODO: implement in future
+	final Map<String, SynchronousPlayer> players;
+
+	public GameFinished(int playersInGame, int maxPlayers, Map<String, SynchronousPlayer> players) {
+		super(playersInGame, maxPlayers, players);
+		this.players = players;
 	}
 
 	@Override
@@ -16,13 +20,4 @@ public final class GameFinished extends AbstractGameState {
 		return null;
 	}
 
-	@Override
-	public Optional<SynchronousPlayer> findPlayer(String player) {
-		return Optional.empty();
-	}
-
-	@Override
-	public Map<String, SynchronousPlayer> getPlayers() {
-		return null;
-	}
 }
