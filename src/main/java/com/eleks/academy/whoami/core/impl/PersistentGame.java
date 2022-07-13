@@ -66,14 +66,14 @@ public class PersistentGame implements Game, SynchronousGame {
 			var newPlayer = new PersistentPlayer(player);
 			var addedPlayer = ((WaitingForPlayers) state).addPlayer(newPlayer);
 
-			if (currentState.peek().getPlayersInGame() == 4) {
+			if (currentState.peek().getPlayersInGame() == state.getMaxPlayers()) {
 				currentState.add(currentState.peek().next());
 				currentState.remove();
 				return addedPlayer;
 			}
 			return addedPlayer;
 		} else {
-			throw new RuntimeException("Game [" + this.getId() + "] has state [" + this.getStatus() + "]");
+			throw new RuntimeException(format("Game %s has state %s", this.getId(), this.getStatus()));
 		}
 	}
 
