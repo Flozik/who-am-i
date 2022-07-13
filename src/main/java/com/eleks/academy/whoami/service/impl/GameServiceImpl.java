@@ -105,8 +105,14 @@ public class GameServiceImpl implements GameService {
 
 	@Override
 	public void leaveGame(String id, String player) {
-		if (gameRepository.findById(id).get().getStatus() == GameStatus.WAITING_FOR_PLAYERS) {
-			gameRepository.findById(id).get().leaveGame(player);
+		var game = gameRepository.findById(id).orElseThrow(
+				() -> {
+					throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Game not found");
+				}
+		);
+
+		if (game.getStatus().equals(GameStatus.WAITING_FOR_PLAYERS)) { // TODO: check == equals
+			game.leaveGame(player);
 		} else {
 			this.gameRepository.deleteById(id);
 		}

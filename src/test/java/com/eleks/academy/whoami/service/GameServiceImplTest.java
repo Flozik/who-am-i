@@ -227,4 +227,64 @@ public class GameServiceImplTest {
 		assertEquals(startGame.get().toString(), expectedGame);
 	}
 
+	@Test
+	void leaveGameWaitingForPlayersTest() {
+		final String player = "player1";
+
+		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
+		final String id = game.getId();
+
+		Optional<SynchronousGame> op = Optional.of(game);
+
+		when(gameRepository.findById(eq(id))).thenReturn(op);
+
+		gameService.enrollToGame(id, "player2");
+		gameService.enrollToGame(id, "player3");
+
+		gameService.leaveGame(id, player);
+
+		assertEquals(2, game.getPlayersInGame().size());
+	}
+
+	@Test
+	void leaveGameSuggestCharacterTest() {
+		final String player = "player1";
+
+		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
+		final String id = game.getId();
+
+		Optional<SynchronousGame> op = Optional.of(game);
+
+		when(gameRepository.findById(eq(id))).thenReturn(op);
+
+		gameService.enrollToGame(id, "player2");
+		gameService.enrollToGame(id, "player3");
+		gameService.enrollToGame(id, "player4");
+
+		gameService.leaveGame(id, player);
+
+		verify(gameRepository).deleteById(eq(id));
+	}
+
+	@Test
+	void leaveGameNotFoundGameTest() {
+		final String player = "player1";
+
+		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
+		final String id = game.getId();
+
+		Optional<SynchronousGame> op = Optional.of(game);
+
+		when(gameRepository.findById(eq(id))).thenReturn(op);
+
+		gameService.enrollToGame(id, "player2");
+		gameService.enrollToGame(id, "player3");
+		gameService.enrollToGame(id, "player4");
+
+		HttpClientErrorException responseStatusException = assertThrows(HttpClientErrorException.class, () ->
+				gameService.leaveGame("1", player));
+
+		assertEquals("404 Game not found", responseStatusException.getMessage());
+	}
+
 }

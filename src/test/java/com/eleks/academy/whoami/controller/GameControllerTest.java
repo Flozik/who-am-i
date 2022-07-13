@@ -24,7 +24,6 @@ import static com.eleks.academy.whoami.enums.GameStatus.WAITING_FOR_PLAYERS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -98,6 +97,7 @@ class GameControllerTest {
 										"\"nickName\": \"nick\"" +
 										"}"))
 				.andExpect(status().isOk());
+
 		verify(gameService, times(1)).suggestCharacter(eq("1234"), eq("player"), any(CharacterSuggestion.class));
 	}
 
@@ -186,11 +186,26 @@ class GameControllerTest {
 						MockMvcRequestBuilders.post("/games/{id}", id)
 								.header("X-Player", player)
 								.contentType(MediaType.APPLICATION_JSON))
-				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(content().json(expectedResponse));
 
 		verify(gameService, times(1)).startGame(id, player);
+	}
+
+	@Test
+	void leaveGameTest() throws Exception {
+		final String id = "12345";
+		final String player = "player";
+
+		doNothing().when(gameService).leaveGame(eq(id), eq(player));
+
+		this.mockMvc.perform(
+						MockMvcRequestBuilders.post("/games/{id}/leave", id)
+								.header("X-Player", player)
+								.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+
+		verify(gameService, times(1)).leaveGame(eq(id), eq(player));
 	}
 
 }

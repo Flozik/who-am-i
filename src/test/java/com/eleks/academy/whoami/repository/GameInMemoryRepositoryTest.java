@@ -7,13 +7,13 @@ import com.eleks.academy.whoami.repository.impl.GameInMemoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(MockitoExtension.class)
 public class GameInMemoryRepositoryTest {
@@ -73,6 +73,19 @@ public class GameInMemoryRepositoryTest {
 		var foundGame = gameRepository.findById(fakeId);
 
 		assertFalse(foundGame.isPresent());
+	}
+
+	@Test
+	void leaveGameTest() {
+		final String player = "player";
+
+		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
+		final String id = game.getId();
+
+		gameRepository.save(game);
+		gameRepository.deleteById(id);
+
+		assertFalse(gameRepository.findById(id).isPresent());
 	}
 
 }
