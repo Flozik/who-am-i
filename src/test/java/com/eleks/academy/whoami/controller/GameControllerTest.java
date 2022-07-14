@@ -5,6 +5,7 @@ import com.eleks.academy.whoami.core.SynchronousGame;
 import com.eleks.academy.whoami.core.impl.PersistentGame;
 import com.eleks.academy.whoami.core.impl.PersistentPlayer;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
+import com.eleks.academy.whoami.model.request.Message;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.service.impl.GameServiceImpl;
@@ -176,9 +177,8 @@ class GameControllerTest {
 
 		GameDetails gameDetails = new GameDetails();
 		gameDetails.setId(id);
-		Optional<GameDetails> op = Optional.of(gameDetails);
 
-		when(gameService.startGame(eq(id), eq(player))).thenReturn(op);
+		when(gameService.startGame(eq(id), eq(player))).thenReturn(gameDetails);
 
 		var expectedResponse = "{\"id\":\"12345\",\"status\":null,\"currentTurn\":null,\"players\":null}";
 

@@ -3,8 +3,10 @@ package com.eleks.academy.whoami.service.impl;
 import com.eleks.academy.whoami.core.SynchronousGame;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.impl.PersistentGame;
+import com.eleks.academy.whoami.core.state.ProcessingQuestion;
 import com.eleks.academy.whoami.enums.GameStatus;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
+import com.eleks.academy.whoami.model.request.Message;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.GameLight;
@@ -24,6 +26,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameService {
 
+	public static final String CANNOT_ENROLL_TO_A_GAME = "Cannot enroll to a game";
+	public static final String PLAYER_NOT_FOUND = "Player not found";
+	public static final String GAME_NOT_FOUND = "Game not found";
 	private final GameRepository gameRepository;
 
 	@Override
@@ -47,7 +52,7 @@ public class GameServiceImpl implements GameService {
 				.filter(SynchronousGame::isAvailable)
 				.map(game -> game.enrollToGame(player))
 				.orElseThrow(
-						() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot enroll to a game")
+						() -> new ResponseStatusException(HttpStatus.FORBIDDEN, CANNOT_ENROLL_TO_A_GAME)
 				);
 	}
 
@@ -61,41 +66,41 @@ public class GameServiceImpl implements GameService {
 	@Override
 	public void suggestCharacter(String id, String player, CharacterSuggestion suggestion) {
 		this.gameRepository.findById(id)
-				.filter(SynchronousGame::isAvailableToSuggestCharacter)
+				.filter(game -> game.getStatus() == GameStatus.SUGGESTING_CHARACTERS)
 				.map(game -> game.findPlayer(player))
-				.ifPresentOrElse(p -> p.ifPresentOrElse(suggest -> suggest.suggestCharacter(suggestion),
-								() -> {
-									throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Player not found");
-								}
-						),
-						() -> {
-							throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Game not found");
-						}
-				);
+				.orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, GAME_NOT_FOUND))
+				.orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, PLAYER_NOT_FOUND))
+				.suggestCharacter(suggestion);
+
 	}
 
 	@Override
-	public Optional<GameDetails> startGame(String id, String player) {
-		return this.gameRepository.findById(id)
-				.filter(game -> game.findPlayer(player).isPresent())
-				.map(SynchronousGame::start)
-				.map(GameDetails::of);
+	public GameDetails startGame(String id, String player) {
+		SynchronousGame game = this.gameRepository.findById(id)
+				.filter(g -> g.getStatus() == GameStatus.STARTS)
+				.orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, GAME_NOT_FOUND));
+		game.findPlayer(player).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, PLAYER_NOT_FOUND));
+		return GameDetails.of(game.start());
 	}
 
 	@Override
-	public void askQuestion(String gameId, String player, String message) {
-		this.gameRepository.findById(gameId)
-				.ifPresent(game -> game.askQuestion(player, message));
+	public void askQuestion(String id, String player, String question) {
+		SynchronousGame game = this.gameRepository.findById(id)
+				.filter(g -> g.getStatus() == GameStatus.IN_PROGRESS)
+				.orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, GAME_NOT_FOUND));
+		game.findPlayer(player).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, PLAYER_NOT_FOUND));
+		game.askQuestion(player, question);
 	}
 
 	@Override
 	public Optional<TurnDetails> findTurnInfo(String id, String player) {
+		final Optional<SynchronousGame> getCurrentGame = gameRepository.findById(id);
 		return Optional.empty();
 	}
 
 	@Override
 	public void submitGuess(String id, String player, String guess) {
-
+		// TODO: Not implemented but implementation is similar to askQuestion method...
 	}
 
 	@Override

@@ -17,10 +17,12 @@ public class PlayerWithState {
 
 	private QuestionAnswer answer;
 
+	private String question;
 	private PlayerState state;
 
 	public PlayerWithState(SynchronousPlayer player, PlayerState state) {
 		this.player = player;
+		this.state = state;
 	}
 
 	public static PlayerWithState of(SynchronousPlayer player) {

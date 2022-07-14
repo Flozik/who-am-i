@@ -1,11 +1,10 @@
 package com.eleks.academy.whoami.core.impl;
 
-import com.eleks.academy.whoami.core.Game;
 import com.eleks.academy.whoami.core.SynchronousGame;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
+import com.eleks.academy.whoami.core.exception.GameException;
 import com.eleks.academy.whoami.core.state.GameFinished;
 import com.eleks.academy.whoami.core.state.GameState;
-import com.eleks.academy.whoami.core.state.SuggestingCharacters;
 import com.eleks.academy.whoami.core.state.WaitingForPlayers;
 import com.eleks.academy.whoami.enums.GameStatus;
 import com.eleks.academy.whoami.model.response.PlayerWithState;
@@ -21,7 +20,7 @@ import java.util.function.Function;
 import static java.lang.String.format;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class PersistentGame implements Game, SynchronousGame {
+public class PersistentGame implements SynchronousGame {
 
 	private final String id;
 
@@ -79,12 +78,16 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public String getTurn() {
-		return this.applyIfPresent(this.currentState.peek(), GameState::getCurrentTurn);
+		return String.valueOf(this.currentState.peek());
 	}
 
 	@Override
-	public void askQuestion(String player, String message) {
-
+	public void askQuestion(String player, String question) {
+		if (this.getTurn().equals(player)){
+			this.findPlayer(this.getTurn()).ifPresent(p -> p.setQuestion(question));
+		}
+		else throw new GameException("Please, wait for your turn.");
+		// TODO: check state of player if ASKING
 	}
 
 	@Override
@@ -111,11 +114,6 @@ public class PersistentGame implements Game, SynchronousGame {
 	}
 
 	@Override
-	public boolean isAvailableToSuggestCharacter() {
-		return this.currentState.peek() instanceof SuggestingCharacters;
-	}
-
-	@Override
 	public GameStatus getStatus() {
 		return this.applyIfPresent(this.currentState.peek(), GameState::getStatus);
 	}
@@ -132,8 +130,8 @@ public class PersistentGame implements Game, SynchronousGame {
 
 
 	@Override
-	public boolean makeTurn() {
-		return true;
+	public void makeTurn() {
+
 	}
 
 	@Override

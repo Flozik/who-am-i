@@ -222,9 +222,9 @@ public class GameServiceImplTest {
 		gameService.suggestCharacter(id, "player4", suggestion4);
 
 		var startGame = gameService.startGame(id, player);
-		String expectedGame = startGame.get().toString();
+		String expectedGame = startGame.toString();
 
-		assertEquals(startGame.get().toString(), expectedGame);
+		assertEquals(startGame.toString(), expectedGame);
 	}
 
 	@Test

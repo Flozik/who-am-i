@@ -12,4 +12,7 @@ public interface SynchronousPlayer {
 
 	void suggestCharacter(CharacterSuggestion suggestion);
 
+    void setQuestion(String question);
+
+	String getQuestion(String question);
 }

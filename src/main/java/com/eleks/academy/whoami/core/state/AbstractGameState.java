@@ -36,11 +36,7 @@ public abstract class AbstractGameState implements GameState {
 		this.players.remove(player);
 	}
 
-	/**
-	 * @return {@code null} as default implementation
-	 */
-	public String getCurrentTurn() {
-		return null;
-	}
+
+
 
 }
