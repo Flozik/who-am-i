@@ -69,16 +69,15 @@ public class GameController {
 	}
 
 	@PostMapping("/{id}")
-	public ResponseEntity<GameDetails> startGame(@PathVariable("id") String id,
+	public GameDetails startGame(@PathVariable("id") String id,
 												 @RequestHeader(PLAYER) String player) {
-		return this.gameService.startGame(id, player)
-				.map(ResponseEntity::ok)
-				.orElseGet(() -> ResponseEntity.notFound().build());
+		return this.gameService.startGame(id, player);
 	}
 
 	@PostMapping("/{id}/questions")
 	public void askQuestion(@PathVariable("id") String id,
-							@RequestHeader(PLAYER) String player, @RequestBody Message message) {
+							@RequestHeader(PLAYER) String player,
+							@Valid @RequestBody Message message) {
 		this.gameService.askQuestion(id, player, message.getMessage());
 	}
 

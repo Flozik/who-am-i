@@ -37,13 +37,6 @@ public interface GameState {
 	 */
 	GameStatus getStatus();
 
-	/**
-	 * Used for presentation purposes only
-	 *
-	 * @return a player, whose turn is now
-	 * or {@code null} if state does not take turns (e.g. {@link SuggestingCharacters})
-	 */
-	String getCurrentTurn();
 
 	/**
 	 * Used for presentation purposes only

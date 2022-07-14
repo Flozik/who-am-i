@@ -176,9 +176,8 @@ class GameControllerTest {
 
 		GameDetails gameDetails = new GameDetails();
 		gameDetails.setId(id);
-		Optional<GameDetails> op = Optional.of(gameDetails);
 
-		when(gameService.startGame(eq(id), eq(player))).thenReturn(op);
+		when(gameService.startGame(eq(id), eq(player))).thenReturn(gameDetails);
 
 		var expectedResponse = "{\"id\":\"12345\",\"status\":null,\"currentTurn\":null,\"players\":null}";
 

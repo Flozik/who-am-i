@@ -33,7 +33,6 @@ public final class ProcessingQuestion extends AbstractGameState {
 		return GameStatus.IN_PROGRESS;
 	}
 
-	@Override
 	public String getCurrentTurn() {
 		return this.currentPlayer;
 	}

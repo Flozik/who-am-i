@@ -21,15 +21,23 @@ public interface SynchronousGame {
 
 	boolean isAvailable();
 
-	boolean isAvailableToSuggestCharacter();
-
 	String getTurn();
 
-	void askQuestion(String player, String message);
+	void makeTurn();
+
+	void changeTurn();
+
+	void initGame();
+
+	void askQuestion(String player, String question);
 
 	void answerQuestion(String player, Answer answer);
 
 	SynchronousGame start();
+
+	boolean isFinished();
+
+	void play();
 
 	void leaveGame(String player);
 }
