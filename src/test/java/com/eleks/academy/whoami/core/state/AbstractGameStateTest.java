@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,9 +22,9 @@ public class AbstractGameStateTest {
 
 		players.put(player, new PersistentPlayer(player));
 
-		var findPlayer = state.findPlayer(player);
-		var newPlayer = new PersistentPlayer(player);
-		Optional<SynchronousPlayer> expectedPlayer = Optional.of(newPlayer);
+		var findPlayerOp = state.findPlayer(player);
+		var findPlayer = findPlayerOp.get();
+		var expectedPlayer = new PersistentPlayer(player);
 
 		assertEquals(expectedPlayer, findPlayer);
 	}

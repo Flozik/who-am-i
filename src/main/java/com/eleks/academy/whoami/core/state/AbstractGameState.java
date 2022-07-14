@@ -42,5 +42,5 @@ public abstract class AbstractGameState implements GameState {
 	public String getCurrentTurn() {
 		return null;
 	}
-	// TODO: refactor API tests
+
 }
