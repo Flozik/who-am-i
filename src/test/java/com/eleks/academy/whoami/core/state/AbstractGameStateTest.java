@@ -22,11 +22,7 @@ public class AbstractGameStateTest {
 
 		players.put(player, new PersistentPlayer(player));
 
-		var findPlayerOp = state.findPlayer(player);
-		var findPlayer = findPlayerOp.get();
-		var expectedPlayer = new PersistentPlayer(player);
-
-		assertEquals(expectedPlayer, findPlayer);
+		assertEquals(new PersistentPlayer(player), state.findPlayer(player).get());
 	}
 
 	@Test
