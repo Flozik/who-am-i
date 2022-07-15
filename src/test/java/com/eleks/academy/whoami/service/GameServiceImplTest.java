@@ -1,11 +1,13 @@
 package com.eleks.academy.whoami.service;
 
 import com.eleks.academy.whoami.core.SynchronousGame;
+import com.eleks.academy.whoami.core.exception.GameException;
 import com.eleks.academy.whoami.core.impl.PersistentGame;
 import com.eleks.academy.whoami.core.impl.PersistentPlayer;
 import com.eleks.academy.whoami.enums.GameStatus;
 import com.eleks.academy.whoami.enums.PlayerState;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
+import com.eleks.academy.whoami.model.request.Message;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.GameLight;
@@ -187,7 +189,31 @@ public class GameServiceImplTest {
 	}
 
 	@Test
+	void suggestCharacterTest(){
+		final String player = "Player1";
+		CharacterSuggestion suggestion = new CharacterSuggestion();
+		suggestion.setNickName("Taras");
+		suggestion.setCharacter("Bet Monkey");
+
+		SynchronousGame game = new PersistentGame(player, 4);
+		final String id = game.getId();
+
+		game.findPlayer(player).ifPresent(s->s.suggestCharacter(suggestion));
+
+		var persistentPlayer = game.findPlayer(player).get();
+
+		var character = persistentPlayer.getCharacter();
+		var nickName = persistentPlayer.getNickName();
+
+		assertEquals(character, "Bet Monkey");
+		assertEquals(nickName, "Taras");
+
+	}
+
+	@Test
 	void startGameTest() {
+		// TODO: to fix this test
+
 		final String player = "player1";
 
 		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
@@ -283,6 +309,82 @@ public class GameServiceImplTest {
 				gameService.leaveGame("1", player));
 
 		assertEquals("404 Game not found", responseStatusException.getMessage());
+	}
+
+
+	// TODO: askQuestion Tests are works but only when we'll implement
+	//  correct work of GameStatus.IN_PROGRESS)
+	//  game haven't this status that because it can't find a game
+	@Test
+	void askQuestionWhenPlayerIsNotFoundTest() {
+		final String player = "Player1";
+		Message message = new Message("some question");
+		var question = message.getMessage();
+
+		SynchronousGame game = new PersistentGame(player, 4);
+		final String id = game.getId();
+		game.enrollToGame("Player2");
+		game.enrollToGame("Player3");
+		game.enrollToGame("Player4");
+
+		Optional<SynchronousGame> optionalSynchronousGame = Optional.of(game);
+		when(gameRepository.findById(id)).thenReturn(optionalSynchronousGame);
+
+		HttpClientErrorException responseStatusException = assertThrows(HttpClientErrorException.class, () ->
+				gameService.askQuestion(id, "Player5", question));
+		assertEquals("404 Player not found", responseStatusException.getMessage());
+
+	}
+
+		@Test
+		void askQuestionWhenGameIsNotFoundTest() {
+			final String player = "Player1";
+			Message message = new Message("some question");
+			var question = message.getMessage();
+
+			SynchronousGame game = new PersistentGame(player, 4);
+			final String id = game.getId();
+			game.enrollToGame("Player2");
+			game.enrollToGame("Player3");
+
+			Optional<SynchronousGame> optionalSynchronousGame = Optional.of(game);
+			when(gameRepository.findById("id")).thenReturn(optionalSynchronousGame);
+
+			HttpClientErrorException responseStatusException = assertThrows(HttpClientErrorException.class, () ->
+					gameService.askQuestion("id", "Player4", question));
+			assertEquals("404 Game not found", responseStatusException.getMessage());
+
+
+		}
+
+	@Test
+	void askQuestionWhenItIsNotPlayersTurnTest() {
+		final String player = "Player1";
+		String question = "Am i smart?";
+
+		SynchronousGame game = new PersistentGame(player, 4);
+		GameException catchException = assertThrows(GameException.class, () ->
+				game.askQuestion(player, question));
+
+		assertEquals("Please, wait for your turn.", catchException.getMessage());
+
+	}
+
+	@Test
+	void askQuestionTest() {
+		// TODO: after we Implemented Turns of Players, we'll needs a mock of player turn
+		final String player = "Player1";
+		String question = "Am i smart?";
+
+		SynchronousGame game = new PersistentGame(player, 4);
+		final String id = game.getId();
+		game.askQuestion(player, question);
+
+		var persistentPlayer = game.findPlayer(player).get();
+
+		var ask = persistentPlayer.getCharacter();
+		assertEquals(ask, "Am i smart?");
+
 	}
 
 }
