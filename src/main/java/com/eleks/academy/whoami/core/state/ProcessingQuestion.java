@@ -3,7 +3,7 @@ package com.eleks.academy.whoami.core.state;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.exception.GameException;
 import com.eleks.academy.whoami.enums.GameStatus;
-import com.eleks.academy.whoami.model.response.PlayerState;
+import com.eleks.academy.whoami.enums.PlayerState;
 
 import java.util.Map;
 
@@ -38,7 +38,7 @@ public final class ProcessingQuestion extends AbstractGameState {
 		return this.currentPlayer;
 	}
 
-	private void updatePlayerStates() {
+	public void updatePlayerStates() {
 		for (var eachPlayer : players.keySet()) {
 			if (currentPlayer.equals(players.get(eachPlayer).getName())) {
 				players.get(eachPlayer).setPlayerState(PlayerState.ASKING);

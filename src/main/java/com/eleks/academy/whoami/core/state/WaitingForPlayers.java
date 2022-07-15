@@ -2,7 +2,7 @@ package com.eleks.academy.whoami.core.state;
 
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.enums.GameStatus;
-import com.eleks.academy.whoami.model.response.PlayerState;
+import com.eleks.academy.whoami.enums.PlayerState;
 
 import java.util.HashMap;
 

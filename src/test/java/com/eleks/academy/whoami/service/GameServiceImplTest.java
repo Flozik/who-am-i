@@ -4,6 +4,7 @@ import com.eleks.academy.whoami.core.SynchronousGame;
 import com.eleks.academy.whoami.core.impl.PersistentGame;
 import com.eleks.academy.whoami.core.impl.PersistentPlayer;
 import com.eleks.academy.whoami.enums.GameStatus;
+import com.eleks.academy.whoami.enums.PlayerState;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
@@ -100,6 +101,7 @@ public class GameServiceImplTest {
 				.status(expectedGameStatus)
 				.players(List.of(new PlayerWithState(new PersistentPlayer(player))))
 				.build();
+		expectedGame.getPlayers().get(0).getPlayer().setPlayerState(PlayerState.NOT_READY);
 
 		Optional<GameDetails> expectedGameOp = Optional.of(expectedGame);
 
@@ -141,6 +143,7 @@ public class GameServiceImplTest {
 
 		var enrolledPlayer = gameService.enrollToGame(id, newPlayer);
 		var expectedPlayer = new PersistentPlayer(newPlayer);
+		expectedPlayer.setPlayerState(PlayerState.NOT_READY);
 
 		assertEquals(enrolledPlayer, expectedPlayer);
 	}

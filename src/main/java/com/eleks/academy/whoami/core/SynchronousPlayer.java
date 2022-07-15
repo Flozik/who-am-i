@@ -1,7 +1,7 @@
 package com.eleks.academy.whoami.core;
 
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
-import com.eleks.academy.whoami.model.response.PlayerState;
+import com.eleks.academy.whoami.enums.PlayerState;
 
 public interface SynchronousPlayer {
 

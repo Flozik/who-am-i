@@ -2,12 +2,12 @@ package com.eleks.academy.whoami.core.impl;
 
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
-import com.eleks.academy.whoami.model.response.PlayerState;
+import com.eleks.academy.whoami.enums.PlayerState;
 import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 public class PersistentPlayer implements SynchronousPlayer {
 
 	private final String name;
@@ -48,7 +48,7 @@ public class PersistentPlayer implements SynchronousPlayer {
 	public void suggestCharacter(CharacterSuggestion suggestion) {
 		this.nickName = suggestion.getNickName();
 		this.character = suggestion.getCharacter();
-		this.setPlayerState(PlayerState.READY);
+		this.playerState = PlayerState.READY;
 	}
 
 }
