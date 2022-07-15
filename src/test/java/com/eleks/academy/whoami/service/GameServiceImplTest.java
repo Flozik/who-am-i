@@ -8,7 +8,6 @@ import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.GameLight;
-import com.eleks.academy.whoami.model.response.PlayerState;
 import com.eleks.academy.whoami.model.response.PlayerWithState;
 import com.eleks.academy.whoami.repository.GameRepository;
 import com.eleks.academy.whoami.service.impl.GameServiceImpl;
@@ -72,15 +71,10 @@ public class GameServiceImplTest {
 
 		var gameDetails = gameService.createGame(player, gameRequest);
 
-		var expectedGame = GameDetails.builder()
-				.status(expectedGameStatus)
-				.players(List.of(new PlayerWithState(new PersistentPlayer(player), PlayerState.READY)))
-				.build();
-
 		assertThat(gameDetails)
 				.usingRecursiveComparison()
 				.ignoringFields(idNaming)
-				.isEqualTo(expectedGame);
+				.isEqualTo(GameDetails.of(new PersistentGame(player, gameRequest.getMaxPlayers())));
 
 		assertEquals(game.getId(), gameDetails.getId());
 		assertEquals(game.getStatus(), gameDetails.getStatus());
@@ -102,10 +96,11 @@ public class GameServiceImplTest {
 
 		var foundGame = gameService.findByIdAndPlayer(id, player);
 		var expectedGame = GameDetails.builder()
-				.id(foundGame.get().getId())
+				.id(id)
 				.status(expectedGameStatus)
-				.players(List.of(new PlayerWithState(new PersistentPlayer(player), PlayerState.READY)))
+				.players(List.of(new PlayerWithState(new PersistentPlayer(player))))
 				.build();
+
 		Optional<GameDetails> expectedGameOp = Optional.of(expectedGame);
 
 		assertEquals(foundGame, expectedGameOp);

@@ -6,7 +6,6 @@ import com.eleks.academy.whoami.enums.GameStatus;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -18,12 +17,6 @@ public final class SuggestingCharacters extends AbstractGameState {
 		super(players.size(), players.size(), players);
 	}
 
-	/**
-	 * Randomly assigns characters to players and returns a next stage
-	 * or throws {@link GameException} in case {@link this#finished()} returns {@code false}
-	 *
-	 * @return next {@link ProcessingQuestion} stage
-	 */
 	@Override
 	public GameState next() {
 		return Optional.of(this)
@@ -120,17 +113,6 @@ public final class SuggestingCharacters extends AbstractGameState {
 			suggestion.setNickName(this.players.get(playerCharacters.getKey()).getNickName());
 			players.get(playerCharacters.getKey()).suggestCharacter(suggestion);
 		}
-	}
-
-	private <T> BiFunction<List<T>, T, T> cyclicNext() {
-		return (list, item) -> {
-			final var index = list.indexOf(item);
-
-			return Optional.of(index)
-					.filter(i -> i + 1 < list.size())
-					.map(i -> list.get(i + 1))
-					.orElseGet(() -> list.get(0));
-		};
 	}
 
 }

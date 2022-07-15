@@ -3,9 +3,9 @@ package com.eleks.academy.whoami.core.state;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.exception.GameException;
 import com.eleks.academy.whoami.enums.GameStatus;
+import com.eleks.academy.whoami.model.response.PlayerState;
 
 import java.util.Map;
-import java.util.Optional;
 
 // TODO: Implement makeTurn(...) and next() methods, pass a turn to next player
 public final class ProcessingQuestion extends AbstractGameState {
@@ -19,6 +19,8 @@ public final class ProcessingQuestion extends AbstractGameState {
 				.stream()
 				.findAny()
 				.orElse(null);
+
+		updatePlayerStates();
 	}
 
 	@Override
@@ -34,6 +36,16 @@ public final class ProcessingQuestion extends AbstractGameState {
 	@Override
 	public String getCurrentTurn() {
 		return this.currentPlayer;
+	}
+
+	private void updatePlayerStates() {
+		for (var eachPlayer : players.keySet()) {
+			if (currentPlayer.equals(players.get(eachPlayer).getName())) {
+				players.get(eachPlayer).setPlayerState(PlayerState.ASKING);
+			} else {
+				players.get(eachPlayer).setPlayerState(PlayerState.ANSWERING);
+			}
+		}
 	}
 
 }

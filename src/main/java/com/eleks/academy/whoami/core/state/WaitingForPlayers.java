@@ -2,6 +2,7 @@ package com.eleks.academy.whoami.core.state;
 
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.enums.GameStatus;
+import com.eleks.academy.whoami.model.response.PlayerState;
 
 import java.util.HashMap;
 
@@ -30,6 +31,7 @@ public final class WaitingForPlayers extends AbstractGameState {
 
 	public SynchronousPlayer addPlayer(SynchronousPlayer player) {
 		players.put(player.getName(), player);
+		players.get(player.getName()).setPlayerState(PlayerState.NOT_READY);
 		return player;
 	}
 

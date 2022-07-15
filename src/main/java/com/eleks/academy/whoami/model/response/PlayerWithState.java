@@ -2,10 +2,7 @@ package com.eleks.academy.whoami.model.response;
 
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.model.request.QuestionAnswer;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
@@ -17,9 +14,7 @@ public class PlayerWithState {
 
 	private QuestionAnswer answer;
 
-	private PlayerState state;
-
-	public PlayerWithState(SynchronousPlayer player, PlayerState state) {
+	public PlayerWithState(SynchronousPlayer player) {
 		this.player = player;
 	}
 

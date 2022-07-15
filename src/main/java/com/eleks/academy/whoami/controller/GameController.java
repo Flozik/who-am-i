@@ -46,7 +46,6 @@ public class GameController {
 				.orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
-
 	@PostMapping("/{id}/players")
 	public SynchronousPlayer enrollToGame(@PathVariable("id") String id,
 										  @RequestHeader(PLAYER) String player) {
