@@ -88,6 +88,7 @@ public class PersistentGame implements SynchronousGame {
 		}
 		else throw new GameException("Please, wait for your turn.");
 		// TODO: check state of player if ASKING
+		//  Implement Turns of Players.
 	}
 
 	@Override
