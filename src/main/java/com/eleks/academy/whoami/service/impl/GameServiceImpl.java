@@ -108,7 +108,7 @@ public class GameServiceImpl implements GameService {
 		var game = gameRepository.findById(id).orElseThrow(
 				() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Game not found"));
 
-		if (game.getStatus().equals(GameStatus.WAITING_FOR_PLAYERS)) {
+		if (game.getStatus().equals(GameStatus.WAITING_FOR_PLAYERS) || game.getStatus().equals(GameStatus.IN_PROGRESS)) {
 			game.leaveGame(player);
 		} else {
 			this.gameRepository.deleteById(id);
