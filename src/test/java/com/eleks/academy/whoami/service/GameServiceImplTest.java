@@ -87,6 +87,8 @@ public class GameServiceImplTest {
 
 	@Test
 	void findByIdAndPlayerTest() {
+		// TODO: Test is down
+
 		final String player = "player";
 		final GameStatus expectedGameStatus = WAITING_FOR_PLAYERS;
 
@@ -253,6 +255,8 @@ public class GameServiceImplTest {
 
 	@Test
 	void leaveGameWaitingForPlayersTest() {
+		// TODO: Test is down
+
 		final String player = "player1";
 
 		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
