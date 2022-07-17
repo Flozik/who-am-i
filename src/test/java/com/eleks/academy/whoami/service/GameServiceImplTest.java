@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -220,9 +221,21 @@ public class GameServiceImplTest {
 		gameService.suggestCharacter(id, "player4", suggestion4);
 
 		var startGame = gameService.startGame(id, player);
-		String expectedGame = startGame.get().toString();
 
-		assertEquals(startGame.get().toString(), expectedGame);
+		List<PlayerWithState> listPlayerWithState = new ArrayList<>();
+		listPlayerWithState.add(new PlayerWithState(game.findPlayer(player).get()));
+		listPlayerWithState.add(new PlayerWithState(game.findPlayer("player2").get()));
+		listPlayerWithState.add(new PlayerWithState(game.findPlayer("player3").get()));
+		listPlayerWithState.add(new PlayerWithState(game.findPlayer("player4").get()));
+
+		var expectedGame = GameDetails.builder()
+				.id(id)
+				.status(GameStatus.IN_PROGRESS)
+				.currentTurn("player1")
+				.players(listPlayerWithState)
+				.build();
+
+		assertEquals(startGame, expectedGame);
 	}
 
 	@Test

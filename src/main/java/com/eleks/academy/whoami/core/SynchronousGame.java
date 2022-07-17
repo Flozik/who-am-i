@@ -2,6 +2,7 @@ package com.eleks.academy.whoami.core;
 
 import com.eleks.academy.whoami.core.impl.Answer;
 import com.eleks.academy.whoami.enums.GameStatus;
+import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.response.PlayerWithState;
 
 import java.util.List;
@@ -14,6 +15,8 @@ public interface SynchronousGame {
 	String getId();
 
 	SynchronousPlayer enrollToGame(String player);
+
+	void setCharacters(String player, CharacterSuggestion characters);
 
 	List<PlayerWithState> getPlayersInGame();
 

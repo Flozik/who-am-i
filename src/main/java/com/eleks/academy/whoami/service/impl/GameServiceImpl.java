@@ -24,6 +24,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameService {
 
+	public static final String PLAYER_NOT_FOUND = "Player not found";
+	public static final String GAME_NOT_FOUND = "Game not found";
 	private final GameRepository gameRepository;
 
 	@Override
@@ -60,26 +62,20 @@ public class GameServiceImpl implements GameService {
 
 	@Override
 	public void suggestCharacter(String id, String player, CharacterSuggestion suggestion) {
-		this.gameRepository.findById(id)
-				.filter(SynchronousGame::isAvailableToSuggestCharacter)
-				.map(game -> game.findPlayer(player))
-				.ifPresentOrElse(p -> p.ifPresentOrElse(suggest -> suggest.suggestCharacter(suggestion),
-								() -> {
-									throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Player not found");
-								}
-						),
-						() -> {
-							throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Game not found");
-						}
-				);
+		SynchronousGame game = this.gameRepository.findById(id)
+				.filter(g -> g.getStatus().equals(GameStatus.SUGGESTING_CHARACTERS))
+				.orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, GAME_NOT_FOUND));
+		game.findPlayer(player).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, PLAYER_NOT_FOUND));
+		game.setCharacters(player, suggestion);
 	}
 
 	@Override
-	public Optional<GameDetails> startGame(String id, String player) {
-		return this.gameRepository.findById(id)
-				.filter(game -> game.findPlayer(player).isPresent())
-				.map(SynchronousGame::start)
-				.map(GameDetails::of);
+	public GameDetails startGame(String id, String player) {
+		SynchronousGame game = this.gameRepository.findById(id)
+				.filter(g -> g.getStatus().equals(GameStatus.STARTS))
+				.orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, GAME_NOT_FOUND));
+		game.findPlayer(player).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, PLAYER_NOT_FOUND));
+		return GameDetails.of(game.start());
 	}
 
 	@Override

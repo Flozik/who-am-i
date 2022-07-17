@@ -64,7 +64,7 @@ public class SuggestingCharacterTest {
 			players.put("Player3", player3);
 			players.put("Player4", player4);
 
-			var characters = new SuggestingCharacters(players);
+			var characters = new StartAssignCharacters(players);
 
 			Map<String, SynchronousPlayer> inputPlayersAndCharacters = new HashMap<>(4);
 			inputPlayersAndCharacters.put("Player1", player5);
@@ -140,7 +140,7 @@ public class SuggestingCharacterTest {
 			players.put("Player3", player3);
 			players.put("Player4", player4);
 
-			var characters = new SuggestingCharacters(players);
+			var characters = new StartAssignCharacters(players);
 
 			final Map<String, SynchronousPlayer> playerCharacterMap = new HashMap<>();
 			playerCharacterMap.put("Player1", player5);
