@@ -42,6 +42,8 @@ public class GameInMemoryRepositoryTest {
 		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
 
 		assertThat(gameRepository.save(game))
+				.usingRecursiveComparison()
+				.ignoringFields("id")
 				.isEqualTo(new PersistentGame(player, 4));
 	}
 

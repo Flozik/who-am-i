@@ -21,7 +21,7 @@ import java.util.function.Function;
 
 import static java.lang.String.format;
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 public class PersistentGame implements Game, SynchronousGame {
 
 	private final String id;

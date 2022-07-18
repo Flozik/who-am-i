@@ -65,7 +65,6 @@ public class GameServiceImplTest {
 	void createGameTest() {
 		final String idNaming = "id";
 		final String player = "player";
-		final GameStatus expectedGameStatus = WAITING_FOR_PLAYERS;
 
 		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
 
@@ -87,7 +86,6 @@ public class GameServiceImplTest {
 	@Test
 	void findByIdAndPlayerTest() {
 		final String player = "player";
-		final GameStatus expectedGameStatus = WAITING_FOR_PLAYERS;
 
 		SynchronousGame game = new PersistentGame(player, gameRequest.getMaxPlayers());
 		final String id = game.getId();
@@ -99,7 +97,7 @@ public class GameServiceImplTest {
 		var foundGame = gameService.findByIdAndPlayer(id, player);
 		var expectedGame = GameDetails.builder()
 				.id(id)
-				.status(expectedGameStatus)
+				.status(WAITING_FOR_PLAYERS)
 				.players(List.of(new PlayerWithState(new PersistentPlayer(player))))
 				.build();
 		expectedGame.getPlayers().get(0).getPlayer().setPlayerState(PlayerState.NOT_READY);

@@ -43,7 +43,7 @@ public final class ProcessingQuestion extends AbstractGameState {
 			if (currentPlayer.equals(players.get(eachPlayer).getName())) {
 				players.get(eachPlayer).setPlayerState(PlayerState.ASKING);
 			} else {
-				players.get(eachPlayer).setPlayerState(PlayerState.ANSWERING);
+				players.get(eachPlayer).setPlayerState(PlayerState.WAITING_FOR_QUESTION);
 			}
 		}
 	}
