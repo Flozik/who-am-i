@@ -3,6 +3,9 @@ package com.eleks.academy.whoami.core.state;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.exception.GameException;
 import com.eleks.academy.whoami.enums.GameStatus;
+import com.eleks.academy.whoami.model.request.CharacterSuggestion;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Map;
 import java.util.Objects;
@@ -19,7 +22,7 @@ public final class SuggestingCharacters extends AbstractGameState {
 		Optional.of(this)
 				.filter(SuggestingCharacters::finished)
 				.orElseThrow(() -> new GameException("Cannot start game"));
-		return new StartAssignCharacters(this.players);
+		return new Start(this.players);
 	}
 
 	@Override
@@ -27,11 +30,17 @@ public final class SuggestingCharacters extends AbstractGameState {
 		return GameStatus.SUGGESTING_CHARACTERS;
 	}
 
-	private boolean finished() {
+	public boolean finished() {
 		return this.players.values().stream()
 				.map(SynchronousPlayer::getCharacter)
 				.filter(Objects::nonNull)
 				.toList().size() == this.getMaxPlayers();
+	};
+
+	public void setCharacters(String player, CharacterSuggestion character) {
+		SynchronousPlayer findPlayer = findPlayer(player)
+				.orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Player not found"));
+		findPlayer.suggestCharacter(character);
 	}
 
 }

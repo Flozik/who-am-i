@@ -9,18 +9,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public final class StartAssignCharacters extends AbstractGameState {
+public final class Start extends AbstractGameState {
 
 	static final int FAILED_ATTEMPTS_SHUFFLED = 5;
 
-	public StartAssignCharacters(Map<String, SynchronousPlayer> players) {
+	public Start(Map<String, SynchronousPlayer> players) {
 		super(players.size(), players.size(), players);
 	}
 
 	@Override
 	public GameState next() {
 		return Optional.of(this)
-				.map(StartAssignCharacters::assignCharacters)
+				.map(Start::assignCharacters)
 				.map(ProcessingQuestion::new)
 				.orElseThrow(() -> new GameException("Cannot start game"));
 	}

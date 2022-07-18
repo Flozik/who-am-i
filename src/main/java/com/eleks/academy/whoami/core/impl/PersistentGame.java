@@ -8,7 +8,6 @@ import com.eleks.academy.whoami.core.state.GameState;
 import com.eleks.academy.whoami.core.state.SuggestingCharacters;
 import com.eleks.academy.whoami.core.state.WaitingForPlayers;
 import com.eleks.academy.whoami.enums.GameStatus;
-import com.eleks.academy.whoami.enums.PlayerState;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.response.PlayerWithState;
 import lombok.EqualsAndHashCode;
@@ -75,10 +74,10 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public void setCharacters(String player, CharacterSuggestion characters) {
-		var currentPlayer = currentState.peek().findPlayer(player).orElseThrow();
-		currentPlayer.suggestCharacter(characters);
-		if (this.isAllPlayersSuggestCharacter()) {
-			currentState.add(currentState.peek().next());
+		SuggestingCharacters suggesting = (SuggestingCharacters) currentState.peek();
+		suggesting.setCharacters(player, characters);
+		if (suggesting.finished()) {
+			currentState.add(suggesting.next());
 			currentState.remove();
 		}
 	}
@@ -162,18 +161,6 @@ public class PersistentGame implements Game, SynchronousGame {
 	@Override
 	public void leaveGame(String player) {
 		this.currentState.peek().leavePlayer(player);
-	}
-
-	private boolean isAllPlayersSuggestCharacter() {
-		int count = 0;
-		GameState gameState = currentState.peek();
-		var players = gameState.getPlayers();
-		for (var key : players.keySet()) {
-			if (players.get(key).getPlayerState().equals(PlayerState.READY)) {
-				count++;
-			}
-		}
-		return count == currentState.peek().getPlayersInGame();
 	}
 
 	private <T, R> R applyIfPresent(T source, Function<T, R> mapper) {
