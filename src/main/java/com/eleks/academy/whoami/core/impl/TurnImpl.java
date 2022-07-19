@@ -1,36 +1,58 @@
 package com.eleks.academy.whoami.core.impl;
 
+import com.eleks.academy.whoami.core.SynchronousPlayer;
+import com.eleks.academy.whoami.core.Turn;
+import com.eleks.academy.whoami.core.action.PlayerAction;
+import com.eleks.academy.whoami.enums.PlayerState;
+
+import java.util.ArrayList;
 import java.util.List;
 
-import com.eleks.academy.whoami.core.Player;
-import com.eleks.academy.whoami.core.Turn;
-
 public class TurnImpl implements Turn {
-	
-	private final List<Player> players;
-	private int currentPlayerIndex = 0;
-	
-	public TurnImpl(List<Player> players) {
-		this.players = players;
-	}
-	
+
+	private SynchronousPlayer currentPlayer;
+	List<PlayerAction> playerActions;
+	List<List<PlayerAction>> turns = new ArrayList<>();
+
 	@Override
-	public Player getGuesser() {
-		return this.players.get(currentPlayerIndex);
+	public void init(List<SynchronousPlayer> players) {
+		this.currentPlayer = players.stream().findAny().orElse(players.get(0));
+		this.playerActions = new ArrayList<>(players.size());
+
+		players.forEach(p -> {
+			if (currentPlayer.equals(p)) {
+				playerActions.add(new PlayerAction(p.getName(), PlayerAction.Action.ANSWER.toString()));
+				p.setPlayerState(PlayerState.ASKING);
+			} else {
+				playerActions.add(new PlayerAction(p.getName(), PlayerAction.Action.QUESTION.toString()));
+				p.setPlayerState(PlayerState.WAITING_FOR_QUESTION);
+			}
+		});
 	}
 
 	@Override
-	public List<Player> getOtherPlayers() {
-		return this.players.stream()
-				.filter(player -> !player.getName().equals(this.getGuesser().getName()))
-				.toList();
+	public void makeTurn(List<SynchronousPlayer> players, boolean samePlayer) {
+
 	}
-	
+
 	@Override
-	public void changeTurn() {
-		this.currentPlayerIndex = this.currentPlayerIndex + 1 >= this.players.size() ? 0 : this.currentPlayerIndex + 1; 
+	public List<PlayerAction> getCurrentTurn() {
+		return this.playerActions;
 	}
-	
-	
+
+	@Override
+	public List<List<PlayerAction>> getTurns() {
+		return null;
+	}
+
+	@Override
+	public String getCurrentPlayer() {
+		return this.currentPlayer.getName();
+	}
+
+	@Override
+	public void saveQuestion(String player, String question) {
+
+	}
 
 }

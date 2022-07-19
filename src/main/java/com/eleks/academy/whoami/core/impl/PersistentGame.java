@@ -1,9 +1,7 @@
 package com.eleks.academy.whoami.core.impl;
 
-import com.eleks.academy.whoami.core.Game;
 import com.eleks.academy.whoami.core.SynchronousGame;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
-import com.eleks.academy.whoami.core.state.GameFinished;
 import com.eleks.academy.whoami.core.state.GameState;
 import com.eleks.academy.whoami.core.state.SuggestingCharacters;
 import com.eleks.academy.whoami.core.state.WaitingForPlayers;
@@ -22,7 +20,7 @@ import java.util.function.Function;
 import static java.lang.String.format;
 
 @EqualsAndHashCode
-public class PersistentGame implements Game, SynchronousGame {
+public class PersistentGame implements SynchronousGame {
 
 	private final String id;
 
@@ -128,34 +126,6 @@ public class PersistentGame implements Game, SynchronousGame {
 	@Override
 	public List<PlayerWithState> getPlayersInGame() {
 		return this.currentState.peek().getPlayers().values().stream().map(PlayerWithState::of).toList();
-	}
-
-	@Override
-	public boolean isFinished() {
-		return this.currentState.isEmpty();
-	}
-
-
-	@Override
-	public boolean makeTurn() {
-		return true;
-	}
-
-	@Override
-	public void changeTurn() {
-
-	}
-
-	@Override
-	public void initGame() {
-
-	}
-
-	@Override
-	public void play() {
-		while (!(this.currentState.peek() instanceof GameFinished)) {
-			this.makeTurn();
-		}
 	}
 
 	@Override
