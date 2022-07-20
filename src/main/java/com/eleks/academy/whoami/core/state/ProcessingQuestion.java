@@ -17,7 +17,7 @@ public final class ProcessingQuestion extends AbstractGameState {
 	public ProcessingQuestion(Map<String, SynchronousPlayer> players) {
 		super(players.size(), players.size(), players);
 		this.turn = new TurnImpl(players.values().stream().toList());
-		updatePlayerState(this.getCurrentTurn(), players);
+		updatePlayersState(this.getCurrentTurn(), players);
 	}
 
 	@Override
@@ -35,15 +35,15 @@ public final class ProcessingQuestion extends AbstractGameState {
 		return this.turn.getCurrentTurn();
 	}
 
-	private void ask(String player, PlayerAction question) {
+	public void ask(String player, PlayerAction.Action question) {
 
 	};
 
-	private void answer(String player, PlayerAction answer) {
+	public void answer(String player, PlayerAction answer) {
 
 	};
 
-	private void updatePlayerState(List<PlayerAction> playerActions, Map<String, SynchronousPlayer> players) {
+	private void updatePlayersState(List<PlayerAction> playerActions, Map<String, SynchronousPlayer> players) {
 		String askingPlayer = "";
 
 		for (var action : playerActions) {
