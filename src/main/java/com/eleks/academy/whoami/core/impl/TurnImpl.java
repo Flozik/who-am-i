@@ -34,9 +34,10 @@ public class TurnImpl implements Turn {
 		List<PlayerAction> previousTurn = turns.get(turns.size() - 1);
 
 		if (previousTurn.size() == players.size()) {
+			String firstPlayer = previousTurn.get(0).getPlayer();
 			if (samePlayer) {
 				previousTurn.forEach(pA -> {
-					if (pA.getAction().equals(PlayerAction.Action.QUESTION)) {
+					if (firstPlayer.equals(pA.getPlayer())) {
 						//TODO: value not implemented
 						playerActions.add(new PlayerAction(pA.getPlayer(), PlayerAction.Action.QUESTION, null));
 					} else {
@@ -45,7 +46,6 @@ public class TurnImpl implements Turn {
 				});
 			} else {
 				Collections.rotate(previousTurn, 1);
-				var firstPlayer = previousTurn.get(0).getPlayer();
 				previousTurn.forEach(pA -> {
 					if (firstPlayer.equals(pA.getPlayer())) {
 						playerActions.add(new PlayerAction(pA.getPlayer(), PlayerAction.Action.QUESTION, null));
