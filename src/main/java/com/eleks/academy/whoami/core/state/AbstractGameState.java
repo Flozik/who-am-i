@@ -1,10 +1,12 @@
 package com.eleks.academy.whoami.core.state;
 
 import com.eleks.academy.whoami.core.SynchronousPlayer;
+import com.eleks.academy.whoami.core.action.PlayerAction;
 import com.eleks.academy.whoami.enums.GameStatus;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,10 +38,7 @@ public abstract class AbstractGameState implements GameState {
 		this.players.remove(player);
 	}
 
-	/**
-	 * @return {@code null} as default implementation
-	 */
-	public String getCurrentTurn() {
+	public List<PlayerAction> getCurrentTurn() {
 		return null;
 	}
 

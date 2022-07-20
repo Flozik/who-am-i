@@ -1,8 +1,10 @@
 package com.eleks.academy.whoami.core.state;
 
 import com.eleks.academy.whoami.core.SynchronousPlayer;
+import com.eleks.academy.whoami.core.action.PlayerAction;
 import com.eleks.academy.whoami.enums.GameStatus;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -43,7 +45,7 @@ public interface GameState {
 	 * @return a player, whose turn is now
 	 * or {@code null} if state does not take turns (e.g. {@link SuggestingCharacters})
 	 */
-	String getCurrentTurn();
+	List<PlayerAction> getCurrentTurn();
 
 	/**
 	 * Used for presentation purposes only

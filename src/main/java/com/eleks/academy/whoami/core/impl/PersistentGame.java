@@ -2,6 +2,7 @@ package com.eleks.academy.whoami.core.impl;
 
 import com.eleks.academy.whoami.core.SynchronousGame;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
+import com.eleks.academy.whoami.core.action.PlayerAction;
 import com.eleks.academy.whoami.core.state.GameState;
 import com.eleks.academy.whoami.core.state.SuggestingCharacters;
 import com.eleks.academy.whoami.core.state.WaitingForPlayers;
@@ -81,18 +82,18 @@ public class PersistentGame implements SynchronousGame {
 	}
 
 	@Override
-	public String getTurn() {
+	public List<PlayerAction> getTurn() {
 		return this.applyIfPresent(this.currentState.peek(), GameState::getCurrentTurn);
 	}
 
 	@Override
 	public void askQuestion(String player, String message) {
-
+		//TODO: move this method to ProcessingQuestion
 	}
 
 	@Override
 	public void answerQuestion(String player, Answer answer) {
-		// TODO: Implement method
+		//TODO: move this method to ProcessingQuestion
 	}
 
 	@Override

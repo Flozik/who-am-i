@@ -229,11 +229,14 @@ public class GameServiceImplTest {
 		var expectedGame = GameDetails.builder()
 				.id(id)
 				.status(GameStatus.IN_PROGRESS)
-				.currentTurn("player1")
+				.currentTurn(List.of())
 				.players(listPlayerWithState)
 				.build();
 
-		assertEquals(startGame, expectedGame);
+		assertThat(startGame)
+				.usingRecursiveComparison()
+				.ignoringFields("currentTurn")
+				.isEqualTo(expectedGame);
 	}
 
 	@Test

@@ -6,16 +6,12 @@ import java.util.List;
 
 public interface Turn {
 
-	void init(List<SynchronousPlayer> players);
-
 	void makeTurn(List<SynchronousPlayer> players, boolean samePlayer);
 
 	List<PlayerAction> getCurrentTurn();
 
 	List<List<PlayerAction>> getTurns();
 
-	void saveQuestion(String player, String question);
-
-	String getCurrentPlayer();
+	void action(String player, PlayerAction action, String question);
 
 }

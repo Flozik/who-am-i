@@ -2,20 +2,22 @@ package com.eleks.academy.whoami.core.state;
 
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.Turn;
+import com.eleks.academy.whoami.core.action.PlayerAction;
 import com.eleks.academy.whoami.core.exception.GameException;
 import com.eleks.academy.whoami.core.impl.TurnImpl;
 import com.eleks.academy.whoami.enums.GameStatus;
+import com.eleks.academy.whoami.enums.PlayerState;
 
+import java.util.List;
 import java.util.Map;
 
-// TODO: Implement makeTurn(...) and next() methods, pass a turn to next player
 public final class ProcessingQuestion extends AbstractGameState {
-	Turn turn = new TurnImpl();
+	private Turn turn;
 
 	public ProcessingQuestion(Map<String, SynchronousPlayer> players) {
 		super(players.size(), players.size(), players);
-
-		turn.init(players.values().stream().toList());
+		this.turn = new TurnImpl(players.values().stream().toList());
+		updatePlayerState(this.getCurrentTurn(), players);
 	}
 
 	@Override
@@ -29,7 +31,34 @@ public final class ProcessingQuestion extends AbstractGameState {
 	}
 
 	@Override
-	public String getCurrentTurn() {
-		return this.turn.getCurrentPlayer();
+	public List<PlayerAction> getCurrentTurn() {
+		return this.turn.getCurrentTurn();
 	}
+
+	private void ask(String player, PlayerAction question) {
+
+	};
+
+	private void answer(String player, PlayerAction answer) {
+
+	};
+
+	private void updatePlayerState(List<PlayerAction> playerActions, Map<String, SynchronousPlayer> players) {
+		String askingPlayer = "";
+
+		for (var action : playerActions) {
+			if (action.getAction().equals(PlayerAction.Action.QUESTION)) {
+				askingPlayer = action.getPlayer();
+			}
+		}
+
+		for (var player : players.entrySet()) {
+			if (player.getValue().getName().equals(askingPlayer)) {
+				player.getValue().setPlayerState(PlayerState.ASKING);
+			} else {
+				player.getValue().setPlayerState(PlayerState.WAITING_FOR_QUESTION);
+			}
+		}
+	}
+
 }

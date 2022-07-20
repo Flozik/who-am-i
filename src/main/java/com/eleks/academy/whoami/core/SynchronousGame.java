@@ -1,5 +1,6 @@
 package com.eleks.academy.whoami.core;
 
+import com.eleks.academy.whoami.core.action.PlayerAction;
 import com.eleks.academy.whoami.core.impl.Answer;
 import com.eleks.academy.whoami.enums.GameStatus;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
@@ -26,7 +27,7 @@ public interface SynchronousGame {
 
 	boolean isAvailableToSuggestCharacter();
 
-	String getTurn();
+	List<PlayerAction> getTurn();
 
 	void askQuestion(String player, String message);
 

@@ -9,6 +9,8 @@ public class PlayerAction {
 
 	String player;
 
+	Action action;
+
 	String value;
 
 	public enum Action {

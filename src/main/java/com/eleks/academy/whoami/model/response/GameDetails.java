@@ -1,6 +1,7 @@
 package com.eleks.academy.whoami.model.response;
 
 import com.eleks.academy.whoami.core.SynchronousGame;
+import com.eleks.academy.whoami.core.action.PlayerAction;
 import com.eleks.academy.whoami.enums.GameStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,7 @@ public class GameDetails {
 
 	private GameStatus status;
 
-	private String currentTurn;
+	private List<PlayerAction> currentTurn;
 
 	private List<PlayerWithState> players;
 
