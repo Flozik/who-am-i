@@ -29,39 +29,23 @@ public class TurnImpl implements Turn {
 
 	@Override
 	public void makeTurn(List<SynchronousPlayer> players, boolean samePlayer) {
-		//TODO: use method rotate from Collections
 		List<PlayerAction> playerActions = new ArrayList<>(players.size());
 		List<PlayerAction> previousTurn = turns.get(turns.size() - 1);
 
 		if (previousTurn.size() == players.size()) {
-			String firstPlayer = previousTurn.get(0).getPlayer();
 			if (samePlayer) {
-				previousTurn.forEach(pA -> {
-					if (firstPlayer.equals(pA.getPlayer())) {
-						//TODO: value not implemented
-						playerActions.add(new PlayerAction(pA.getPlayer(), PlayerAction.Action.QUESTION, null));
-					} else {
-						playerActions.add(new PlayerAction(pA.getPlayer(), PlayerAction.Action.ANSWER, null));
-					}
-				});
+				saveNewTurn(playerActions, previousTurn);
 			} else {
 				Collections.rotate(previousTurn, 1);
-				previousTurn.forEach(pA -> {
-					if (firstPlayer.equals(pA.getPlayer())) {
-						playerActions.add(new PlayerAction(pA.getPlayer(), PlayerAction.Action.QUESTION, null));
-					} else {
-						playerActions.add(new PlayerAction(pA.getPlayer(), PlayerAction.Action.ANSWER, null));
-					}
-				});
+
+				saveNewTurn(playerActions, previousTurn);
 			}
 		} else {
-			/*players.forEach(p -> {
-				playerActions.add(new PlayerAction(p.getName(), PlayerAction.Action.QUESTION, null));
-			});*/
+			updateAvailablePlayers(previousTurn, players);
+
 			Collections.rotate(previousTurn, 1);
-			previousTurn.forEach(pA -> {
-				playerActions.add(new PlayerAction(pA.getPlayer(), PlayerAction.Action.ANSWER, null));
-			});
+
+			saveNewTurn(playerActions, previousTurn);
 		}
 		turns.add(playerActions);
 	}
@@ -79,6 +63,32 @@ public class TurnImpl implements Turn {
 	@Override
 	public void action(String player, PlayerAction action, String question) {
 
+	}
+
+	private void saveNewTurn(List<PlayerAction> playerActions, List<PlayerAction> previousTurn) {
+		String firstPlayer = previousTurn.get(0).getPlayer();
+
+		previousTurn.forEach(pA -> {
+			if (firstPlayer.equals(pA.getPlayer())) {
+				//TODO: value not implemented
+				playerActions.add(new PlayerAction(pA.getPlayer(), PlayerAction.Action.QUESTION, null));
+			} else {
+				playerActions.add(new PlayerAction(pA.getPlayer(), PlayerAction.Action.ANSWER, null));
+			}
+		});
+	}
+
+	private void updateAvailablePlayers(List<PlayerAction> previousTurn, List<SynchronousPlayer> players) {
+		List<PlayerAction> tmpPlayerAction = new ArrayList<>();
+		var firstPlayer = previousTurn.get(0).getAction();
+		players.forEach(p -> {
+			if (firstPlayer.equals(PlayerAction.Action.QUESTION)) {
+				tmpPlayerAction.add(new PlayerAction(p.getName(), PlayerAction.Action.QUESTION, null));
+			} else {
+				tmpPlayerAction.add(new PlayerAction(p.getName(), PlayerAction.Action.ANSWER, null));
+			}
+		});
+		previousTurn.retainAll(tmpPlayerAction);
 	}
 
 }
