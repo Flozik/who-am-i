@@ -3,18 +3,18 @@ package com.eleks.academy.whoami.core.impl;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.Turn;
 import com.eleks.academy.whoami.core.action.PlayerAction;
+import com.eleks.academy.whoami.core.exception.GameException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class TurnImpl implements Turn {
 
 	private List<List<PlayerAction>> turns = new ArrayList<>();
 
 	public TurnImpl(List<SynchronousPlayer> players) {
-		SynchronousPlayer currentPlayer = players.get(new Random().nextInt(players.size()));
+		SynchronousPlayer currentPlayer = players.get(0);
 		List<PlayerAction> playerActions = new ArrayList<>(players.size());
 
 		players.forEach(p -> {
@@ -29,25 +29,19 @@ public class TurnImpl implements Turn {
 
 	@Override
 	public void makeTurn(List<SynchronousPlayer> players, boolean samePlayer) {
-		List<PlayerAction> playerActions = new ArrayList<>(players.size());
 		List<PlayerAction> previousTurn = turns.get(turns.size() - 1);
 
 		if (previousTurn.size() == players.size()) {
 			if (samePlayer) {
-				saveNewTurn(playerActions, previousTurn);
 			} else {
 				Collections.rotate(previousTurn, 1);
-
-				saveNewTurn(playerActions, previousTurn);
 			}
 		} else {
 			updateAvailablePlayers(previousTurn, players);
 
 			Collections.rotate(previousTurn, 1);
-
-			saveNewTurn(playerActions, previousTurn);
 		}
-		turns.add(playerActions);
+		turns.add(newTurn(previousTurn));
 	}
 
 	@Override
@@ -61,11 +55,12 @@ public class TurnImpl implements Turn {
 	}
 
 	@Override
-	public void action(String player, PlayerAction action, String question) {
-
+	public void action(String player, PlayerAction action, String value) {
+		throw new GameException("Not implemented");
 	}
 
-	private void saveNewTurn(List<PlayerAction> playerActions, List<PlayerAction> previousTurn) {
+	private List<PlayerAction> newTurn(List<PlayerAction> previousTurn) {
+		List<PlayerAction> playerActions = new ArrayList<>();
 		String firstPlayer = previousTurn.get(0).getPlayer();
 
 		previousTurn.forEach(pA -> {
@@ -76,13 +71,14 @@ public class TurnImpl implements Turn {
 				playerActions.add(new PlayerAction(pA.getPlayer(), PlayerAction.Action.ANSWER, null));
 			}
 		});
+		return playerActions;
 	}
 
 	private void updateAvailablePlayers(List<PlayerAction> previousTurn, List<SynchronousPlayer> players) {
 		List<PlayerAction> tmpPlayerAction = new ArrayList<>();
-		var firstPlayer = previousTurn.get(0).getAction();
+		var firstPlayer = previousTurn.get(0).getPlayer();
 		players.forEach(p -> {
-			if (firstPlayer.equals(PlayerAction.Action.QUESTION)) {
+			if (firstPlayer.equals(p.getName())) {
 				tmpPlayerAction.add(new PlayerAction(p.getName(), PlayerAction.Action.QUESTION, null));
 			} else {
 				tmpPlayerAction.add(new PlayerAction(p.getName(), PlayerAction.Action.ANSWER, null));

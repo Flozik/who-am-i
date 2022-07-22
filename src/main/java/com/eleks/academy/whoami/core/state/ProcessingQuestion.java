@@ -36,21 +36,24 @@ public final class ProcessingQuestion extends AbstractGameState {
 	}
 
 	public void ask(String player, PlayerAction.Action question) {
+		throw new GameException("Not implemented");
+	}
 
-	};
+	;
 
 	public void answer(String player, PlayerAction answer) {
+		throw new GameException("Not implemented");
+	}
 
-	};
+	;
 
 	private void updatePlayersState(List<PlayerAction> playerActions, Map<String, SynchronousPlayer> players) {
-		String askingPlayer = "";
-
-		for (var action : playerActions) {
-			if (action.getAction().equals(PlayerAction.Action.QUESTION)) {
-				askingPlayer = action.getPlayer();
-			}
-		}
+		String askingPlayer = playerActions
+				.stream()
+				.filter(action -> action.getAction().equals(PlayerAction.Action.QUESTION))
+				.map(PlayerAction::getPlayer)
+				.findFirst()
+				.orElseThrow(() -> new GameException("Cannot find asking player"));
 
 		for (var player : players.entrySet()) {
 			if (player.getValue().getName().equals(askingPlayer)) {

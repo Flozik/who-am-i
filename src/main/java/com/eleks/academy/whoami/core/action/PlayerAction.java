@@ -1,10 +1,12 @@
 package com.eleks.academy.whoami.core.action;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Data
+@Getter
 @AllArgsConstructor
+@EqualsAndHashCode
 public class PlayerAction {
 
 	String player;
