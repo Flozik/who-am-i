@@ -1,5 +1,6 @@
 package com.eleks.academy.whoami.api;
 
+//import com.eleks.academy.whoami.core.action.PlayerAction;
 import com.eleks.academy.whoami.handler.ApiClient;
 import com.eleks.academy.whoami.model.*;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -84,6 +85,11 @@ class GameApiTest {
 			synchronousPlayer.name("Example");
 			synchronousPlayer.character("Batman");
 
+			PlayerAction playerAction = new PlayerAction();
+			playerAction.player("Example");
+			playerAction.action(Action.QUESTION);
+			playerAction.value("Value");
+
 			PlayerWithState playerWithState = new PlayerWithState();
 			playerWithState.player(synchronousPlayer);
 			playerWithState.answer(QuestionAnswer.NO);
@@ -92,7 +98,7 @@ class GameApiTest {
 			GameDetails gameDetails = new GameDetails();
 			gameDetails.id("1234-Uid");
 			gameDetails.status("WaitingForPlayers");
-			gameDetails.currentTurn("1");
+			gameDetails.currentTurn(singletonList(playerAction));
 			gameDetails.players(singletonList(playerWithState));
 
 			assertThat(gameApi.createGame(newGameRequest, "Example")).isEqualTo(gameDetails);
@@ -116,6 +122,11 @@ class GameApiTest {
 			synchronousPlayer.name("Example");
 			synchronousPlayer.character("Batman");
 
+			PlayerAction playerAction = new PlayerAction();
+			playerAction.player("Example");
+			playerAction.action(Action.QUESTION);
+			playerAction.value("Value");
+
 			PlayerWithState playerWithState = new PlayerWithState();
 			playerWithState.player(synchronousPlayer);
 			playerWithState.answer(QuestionAnswer.NO);
@@ -124,7 +135,7 @@ class GameApiTest {
 			GameDetails gameDetails = new GameDetails();
 			gameDetails.id("1234-Uid");
 			gameDetails.status("WaitingForPlayers");
-			gameDetails.currentTurn("1");
+			gameDetails.currentTurn(singletonList(playerAction));
 			gameDetails.players(singletonList(playerWithState));
 
 			assertThat(gameApi.findById("Example", "1234-Uid"))
@@ -150,6 +161,11 @@ class GameApiTest {
 			synchronousPlayer.name("Example");
 			synchronousPlayer.character("Batman");
 
+			PlayerAction playerAction = new PlayerAction();
+			playerAction.player("Example");
+			playerAction.action(Action.QUESTION);
+			playerAction.value("Value");
+
 			PlayerWithState playerWithState = new PlayerWithState();
 			playerWithState.player(synchronousPlayer);
 			playerWithState.answer(QuestionAnswer.NO);
@@ -158,7 +174,7 @@ class GameApiTest {
 			GameDetails gameDetails = new GameDetails();
 			gameDetails.id("1234-Uid");
 			gameDetails.status("WaitingForPlayers");
-			gameDetails.currentTurn("1");
+			gameDetails.currentTurn(singletonList(playerAction));
 			gameDetails.players(singletonList(playerWithState));
 
 			assertThat(gameApi.startGame("Example", "1234-Uid")).isEqualTo(gameDetails);

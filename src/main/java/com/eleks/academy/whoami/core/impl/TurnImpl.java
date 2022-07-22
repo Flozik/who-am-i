@@ -29,11 +29,10 @@ public class TurnImpl implements Turn {
 
 	@Override
 	public void makeTurn(List<SynchronousPlayer> players, boolean samePlayer) {
-		List<PlayerAction> previousTurn = turns.get(turns.size() - 1);
+		List<PlayerAction> previousTurn = this.getCurrentTurn();
 
 		if (previousTurn.size() == players.size()) {
-			if (samePlayer) {
-			} else {
+			if (!samePlayer) {
 				Collections.rotate(previousTurn, 1);
 			}
 		} else {

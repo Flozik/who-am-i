@@ -369,9 +369,7 @@ components:
         player:
           type: string
         action:
-          type: array
-          items:
-            $ref: '#/components/schemas/Action'
+          $ref: '#/components/schemas/Action'
         value:
           type: string
 #  ---- Enums section  ----------------------------------------            

@@ -26,16 +26,11 @@ public class TurnImplTest {
 
 	@Test
 	void turnImplConstructorTest() {
-		List<PlayerAction> expectedResult = new ArrayList<>();
-		expectedResult.add(new PlayerAction("player1", PlayerAction.Action.ANSWER, null));
-		expectedResult.add(new PlayerAction("player2", PlayerAction.Action.ANSWER, null));
-		expectedResult.add(new PlayerAction("player3", PlayerAction.Action.ANSWER, null));
-		expectedResult.add(new PlayerAction("player4", PlayerAction.Action.ANSWER, null));
-
 		assertThat(new TurnImpl(players).getCurrentTurn())
-				.usingRecursiveComparison()
-				.ignoringFields("action")
-				.isEqualTo(expectedResult);
+				.containsExactlyInAnyOrder(new PlayerAction("player1", PlayerAction.Action.QUESTION, null),
+				new PlayerAction("player2", PlayerAction.Action.ANSWER, null),
+				new PlayerAction("player3", PlayerAction.Action.ANSWER, null),
+				new PlayerAction("player4", PlayerAction.Action.ANSWER, null));
 	}
 
 	@Test
@@ -62,9 +57,7 @@ public class TurnImplTest {
 
 		turn.makeTurn(players, false);
 
-		List<PlayerAction> afterMakeTurn = turn.getCurrentTurn();
-
-		assertEquals(expectedMakeTurn, afterMakeTurn);
+		assertEquals(expectedMakeTurn, turn.getCurrentTurn());
 	}
 
 	@Test
@@ -83,9 +76,7 @@ public class TurnImplTest {
 
 		turn.makeTurn(newPlayers, false);
 
-		List<PlayerAction> afterMakeTurn = turn.getCurrentTurn();
-
-		assertEquals(expectedMakeTurn, afterMakeTurn);
+		assertEquals(expectedMakeTurn, turn.getCurrentTurn());
 	}
 
 }

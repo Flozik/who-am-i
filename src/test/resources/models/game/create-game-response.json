@@ -1,7 +1,13 @@
 {
 	"id": "1234-Uid",
 	"status": "WaitingForPlayers",
-	"currentTurn": "1",
+	"currentTurn": [
+		{
+			"player": "Example",
+			"action": "QUESTION",
+			"value": "Value"
+		}
+	],
 	"players": [
 		{
 			"player": {
