@@ -12,6 +12,6 @@ public interface Turn {
 
 	List<List<PlayerAction>> getTurns();
 
-	void action(String player, PlayerAction action, String question);
+	void action(String player, String value);
 
 }

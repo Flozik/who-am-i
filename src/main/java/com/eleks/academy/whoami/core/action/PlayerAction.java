@@ -3,13 +3,15 @@ package com.eleks.academy.whoami.core.action;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @EqualsAndHashCode
 public class PlayerAction {
 
-	String player;
+	final String player;
 
 	Action action;
 
@@ -17,6 +19,10 @@ public class PlayerAction {
 
 	public enum Action {
 		QUESTION, ANSWER
+	}
+
+	public enum turnResult {
+		SUCCESSFUL, UNSUCCESSFUL, NOT_ASK
 	}
 
 }

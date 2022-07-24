@@ -79,4 +79,12 @@ public class TurnImplTest {
 		assertEquals(expectedMakeTurn, turn.getCurrentTurn());
 	}
 
+	@Test
+	void actionTest() {
+		Turn turn = new TurnImpl(players);
+
+		turn.action("player1", "Am I hero?");
+
+		assertEquals(turn.getTurns().get(0).get(0).getValue(), "Am I hero?");
+	}
 }

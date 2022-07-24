@@ -87,8 +87,10 @@ public class GameController {
 	}
 
 	@PostMapping("/{id}/answer")
+	@ResponseStatus(HttpStatus.OK)
 	public void answerQuestion(@PathVariable("id") String id,
-							   @RequestHeader(PLAYER) String player, @RequestBody Message message) {
+							   @RequestHeader(PLAYER) String player,
+							   @RequestBody Message message) {
 		this.gameService.answerQuestion(id, player, message.getMessage());
 	}
 

@@ -24,6 +24,7 @@ import static com.eleks.academy.whoami.enums.GameStatus.WAITING_FOR_PLAYERS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -140,6 +141,7 @@ class GameControllerTest {
 						MockMvcRequestBuilders.get("/games/{id}", fakeId)
 								.header("X-Player", player)
 								.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
 				.andExpect(status().isNotFound())
 				.andExpect(content().string(""));
 
@@ -189,6 +191,24 @@ class GameControllerTest {
 				.andExpect(content().json(expectedResponse));
 
 		verify(gameService, times(1)).startGame(id, player);
+	}
+
+	@Test
+	void answerQuestionTest() throws Exception {
+		final String id = "12345";
+		final String player = "player";
+		final String answer = "some answer";
+
+		doNothing().when(gameService).answerQuestion(eq(id), eq(player), eq(answer));
+
+		this.mockMvc.perform(
+						MockMvcRequestBuilders.post("/games/{id}/answer", id)
+								.header("X-Player", player)
+								.contentType(MediaType.APPLICATION_JSON)
+								.content("{\"message\":\"some answer\"}"))
+				.andExpect(status().isOk());
+
+		verify(gameService).answerQuestion(eq(id), eq(player), eq(answer));
 	}
 
 	@Test

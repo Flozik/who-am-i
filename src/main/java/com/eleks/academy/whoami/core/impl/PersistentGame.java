@@ -4,9 +4,11 @@ import com.eleks.academy.whoami.core.SynchronousGame;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.action.PlayerAction;
 import com.eleks.academy.whoami.core.state.GameState;
+import com.eleks.academy.whoami.core.state.ProcessingQuestion;
 import com.eleks.academy.whoami.core.state.SuggestingCharacters;
 import com.eleks.academy.whoami.core.state.WaitingForPlayers;
 import com.eleks.academy.whoami.enums.GameStatus;
+import com.eleks.academy.whoami.enums.VotingOptions;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.response.PlayerWithState;
 import lombok.EqualsAndHashCode;
@@ -92,8 +94,9 @@ public class PersistentGame implements SynchronousGame {
 	}
 
 	@Override
-	public void answerQuestion(String player, Answer answer) {
-		//TODO: move this method to ProcessingQuestion
+	public void answerQuestion(String player, VotingOptions answer) {
+		var q = (ProcessingQuestion) currentState.peek();
+		q.answer(player, answer.toString());
 	}
 
 	@Override

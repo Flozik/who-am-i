@@ -1,8 +1,8 @@
 package com.eleks.academy.whoami.core;
 
 import com.eleks.academy.whoami.core.action.PlayerAction;
-import com.eleks.academy.whoami.core.impl.Answer;
 import com.eleks.academy.whoami.enums.GameStatus;
+import com.eleks.academy.whoami.enums.VotingOptions;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.response.PlayerWithState;
 
@@ -31,7 +31,7 @@ public interface SynchronousGame {
 
 	void askQuestion(String player, String message);
 
-	void answerQuestion(String player, Answer answer);
+	void answerQuestion(String player, VotingOptions answer);
 
 	SynchronousGame start();
 
