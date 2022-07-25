@@ -60,20 +60,18 @@ public class TurnImpl implements Turn {
 
 	@Override
 	public boolean isAnswerer(String player) {
-		int index = this.getCurrentTurn()
-				.indexOf(new PlayerAction(player, PlayerAction.Action.ANSWER, null));
-		return index >= 0;
+		return this.getCurrentTurn().stream().anyMatch(p -> p.getPlayer().equals(player)
+				&& p.getAction().equals(PlayerAction.Action.ANSWER));
 	}
 
 	@Override
 	public boolean hasTurnEnded() {
-		int count = 0;
 		for (int i = 1; i < this.getCurrentTurn().size(); i++) {
-			if (this.getCurrentTurn().get(i).getValue() != null) {
-				count++;
+			if (this.getCurrentTurn().get(i).getValue() == null) {
+				return false;
 			}
 		}
-		return count == this.getCurrentTurn().size() - 1;
+		return true;
 	}
 
 	@Override
@@ -88,10 +86,8 @@ public class TurnImpl implements Turn {
 	@Override
 	public boolean calculateAnswers() {
 		long yes = this.getCurrentTurn().stream()
-				.filter(p -> p.getValue().equals(VotingOptions.YES.toString())).count();
-		long notSure = this.getCurrentTurn().stream()
-				.filter(p -> p.getValue().equals(VotingOptions.NOT_SURE.toString())).count();
-		yes += notSure;
+				.filter(p -> p.getValue().equals(VotingOptions.YES.toString())
+						|| p.getValue().equals(VotingOptions.NOT_SURE.toString())).count();
 		long no = this.getCurrentTurn().stream()
 				.filter(p -> p.getValue().equals(VotingOptions.NO.toString())).count();
 		return yes > no;

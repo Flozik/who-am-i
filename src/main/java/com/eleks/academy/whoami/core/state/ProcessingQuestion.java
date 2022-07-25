@@ -41,18 +41,12 @@ public final class ProcessingQuestion extends AbstractGameState {
 	}
 
 	public void answer(String player, String value) {
-		if (turn.isQuestionPresent()) {
-			if (turn.isAnswerer(player)) {
-				turn.action(player, value);
-				if (turn.hasTurnEnded()) {
-					turn.makeTurn(players.values().stream().toList(), turn.calculateAnswers());
-					updatePlayersState(this.getCurrentTurn(), players);
-				}
-			} else {
-				throw new GameException("You can't answer");
-			}
-		} else {
-			throw new GameException("No question for answer");
+		if (!turn.isQuestionPresent()) throw new GameException("No question for answer");
+		if (!turn.isAnswerer(player)) throw new GameException("You can't answer");
+		turn.action(player, value);
+		if (turn.hasTurnEnded()) {
+			turn.makeTurn(players.values().stream().toList(), turn.calculateAnswers());
+			updatePlayersState(this.getCurrentTurn(), players);
 		}
 	}
 
