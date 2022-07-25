@@ -3,6 +3,7 @@ package com.eleks.academy.whoami.core.impl;
 import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.Turn;
 import com.eleks.academy.whoami.core.action.PlayerAction;
+import com.eleks.academy.whoami.enums.VotingOptions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,12 +54,47 @@ public class TurnImpl implements Turn {
 	}
 
 	@Override
+	public boolean isQuestionPresent() {
+		return this.getCurrentTurn().get(0).getValue() != null;
+	}
+
+	@Override
+	public boolean isAnswerer(String player) {
+		int index = this.getCurrentTurn()
+				.indexOf(new PlayerAction(player, PlayerAction.Action.ANSWER, null));
+		return index >= 0;
+	}
+
+	@Override
+	public boolean hasTurnEnded() {
+		int count = 0;
+		for (int i = 1; i < this.getCurrentTurn().size(); i++) {
+			if (this.getCurrentTurn().get(i).getValue() != null) {
+				count++;
+			}
+		}
+		return count == this.getCurrentTurn().size() - 1;
+	}
+
+	@Override
 	public void action(String player, String value) {
 		this.getCurrentTurn().forEach(p -> {
 			if (p.getPlayer().equals(player)) {
 				p.setValue(value);
 			}
 		});
+	}
+
+	@Override
+	public boolean calculateAnswers() {
+		long yes = this.getCurrentTurn().stream()
+				.filter(p -> p.getValue().equals(VotingOptions.YES.toString())).count();
+		long notSure = this.getCurrentTurn().stream()
+				.filter(p -> p.getValue().equals(VotingOptions.NOT_SURE.toString())).count();
+		yes += notSure;
+		long no = this.getCurrentTurn().stream()
+				.filter(p -> p.getValue().equals(VotingOptions.NO.toString())).count();
+		return yes > no;
 	}
 
 	private List<PlayerAction> newTurn(List<PlayerAction> previousTurn) {

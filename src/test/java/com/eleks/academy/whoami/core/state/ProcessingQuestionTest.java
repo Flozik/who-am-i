@@ -28,12 +28,12 @@ class ProcessingQuestionTest {
 	}
 
 	@Test
-	void answerTest() {
+	void answerSamePlayerTest() {
 		ProcessingQuestion question = new ProcessingQuestion(players);
 		question.getCurrentTurn().get(0).setValue("Am I hero?");
 
-		for (var q : question.players.entrySet()) {
-			q.getValue().setPlayerState(PlayerState.ANSWERING);
+		for (var player : question.players.entrySet()) {
+			player.getValue().setPlayerState(PlayerState.ANSWERING);
 		}
 
 		question.answer("player2", "YES");
@@ -45,6 +45,26 @@ class ProcessingQuestionTest {
 						new PlayerAction("player2", PlayerAction.Action.ANSWER, null),
 						new PlayerAction("player3", PlayerAction.Action.ANSWER, null),
 						new PlayerAction("player4", PlayerAction.Action.ANSWER, null));
+	}
+
+	@Test
+	void answerAnotherPlayerTest() {
+		ProcessingQuestion question = new ProcessingQuestion(players);
+		question.getCurrentTurn().get(0).setValue("Am I hero?");
+
+		for (var player : question.players.entrySet()) {
+			player.getValue().setPlayerState(PlayerState.ANSWERING);
+		}
+
+		question.answer("player2", "YES");
+		question.answer("player3", "NO");
+		question.answer("player4", "NO");
+
+		assertThat(question.getCurrentTurn())
+				.containsExactlyInAnyOrder(new PlayerAction("player4", PlayerAction.Action.QUESTION, null),
+						new PlayerAction("player1", PlayerAction.Action.ANSWER, null),
+						new PlayerAction("player2", PlayerAction.Action.ANSWER, null),
+						new PlayerAction("player3", PlayerAction.Action.ANSWER, null));
 	}
 
 	@Test
