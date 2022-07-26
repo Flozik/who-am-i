@@ -11,6 +11,7 @@ import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.GameLight;
+import com.eleks.academy.whoami.model.response.History;
 import com.eleks.academy.whoami.model.response.PlayerWithState;
 import com.eleks.academy.whoami.repository.GameRepository;
 import com.eleks.academy.whoami.service.impl.GameServiceImpl;
@@ -19,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -247,7 +247,7 @@ public class GameServiceImplTest {
 		final String id = "12345";
 		final String player = "player1";
 
-		SynchronousGame mockedGame = Mockito.mock(SynchronousGame.class);
+		SynchronousGame mockedGame = mock(SynchronousGame.class);
 
 		when(gameRepository.findById(id)).thenReturn(Optional.of(mockedGame));
 		when(mockedGame.getStatus()).thenReturn(GameStatus.IN_PROGRESS);
@@ -271,13 +271,57 @@ public class GameServiceImplTest {
 		final String id = "12345";
 		final String player = "player1";
 
-		SynchronousGame mockedGame = Mockito.mock(SynchronousGame.class);
+		SynchronousGame mockedGame = mock(SynchronousGame.class);
 
 		when(gameRepository.findById(id)).thenReturn(Optional.of(mockedGame));
 		when(mockedGame.getStatus()).thenReturn(GameStatus.IN_PROGRESS);
 
 		ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, () ->
 				gameService.answerQuestion(id, player, "YES"));
+
+		assertEquals("404 NOT_FOUND \"Player not found\"", responseStatusException.getMessage());
+	}
+
+	@Test
+	void historyTest() {
+		final String id = "12345";
+		final String player = "player1";
+		var list = List.of(List
+				.of(new PlayerAction(player, PlayerAction.Action.QUESTION, null),
+						new PlayerAction("player2", PlayerAction.Action.ANSWER, null),
+						new PlayerAction("player3", PlayerAction.Action.ANSWER, null),
+						new PlayerAction("player4", PlayerAction.Action.ANSWER, null)));
+
+		SynchronousGame mockedGame = mock(SynchronousGame.class);
+
+		when(gameRepository.findById(id)).thenReturn(Optional.of(mockedGame));
+		when(mockedGame.getStatus()).thenReturn(GameStatus.IN_PROGRESS);
+		when(mockedGame.findPlayer(player)).thenReturn(Optional.of(new PersistentPlayer("player")));
+		when(mockedGame.history()).thenReturn(list);
+
+		assertEquals(History.of(list), gameService.history(id, player));
+	}
+
+	@Test
+	void historyNofFoundGameTest() {
+		ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, () ->
+				gameService.history("12345", "player1"));
+
+		assertEquals("404 NOT_FOUND \"Game not found or not available.\"", responseStatusException.getMessage());
+	}
+
+	@Test
+	void historyNotFoundPlayerTest() {
+		final String id = "12345";
+		final String player = "player1";
+
+		SynchronousGame mockedGame = mock(SynchronousGame.class);
+
+		when(gameRepository.findById(id)).thenReturn(Optional.of(mockedGame));
+		when(mockedGame.getStatus()).thenReturn(GameStatus.IN_PROGRESS);
+
+		ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, () ->
+				gameService.history(id, player));
 
 		assertEquals("404 NOT_FOUND \"Player not found\"", responseStatusException.getMessage());
 	}

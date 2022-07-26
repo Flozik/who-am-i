@@ -2,11 +2,13 @@ package com.eleks.academy.whoami.controller;
 
 import com.eleks.academy.whoami.configuration.GameControllerAdvice;
 import com.eleks.academy.whoami.core.SynchronousGame;
+import com.eleks.academy.whoami.core.action.PlayerAction;
 import com.eleks.academy.whoami.core.impl.PersistentGame;
 import com.eleks.academy.whoami.core.impl.PersistentPlayer;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
+import com.eleks.academy.whoami.model.response.History;
 import com.eleks.academy.whoami.service.impl.GameServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.eleks.academy.whoami.enums.GameStatus.WAITING_FOR_PLAYERS;
@@ -209,6 +212,23 @@ class GameControllerTest {
 				.andExpect(status().isOk());
 
 		verify(gameService).answerQuestion(eq(id), eq(player), eq(answer));
+	}
+
+	@Test
+	void historyTest() throws Exception {
+		final String id = "12345";
+		final String player = "player";
+
+		when(gameService.history(id, player))
+				.thenReturn(History.of(List.of(List
+						.of(new PlayerAction(player, PlayerAction.Action.QUESTION, null)))));
+
+		this.mockMvc.perform(
+						MockMvcRequestBuilders.get("/games/{id}/history", id)
+								.header("X-Player", player)
+								.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(content().string("{\"turns\":[[{\"player\":\"player\",\"action\":\"QUESTION\",\"value\":null}]]}"));
 	}
 
 	@Test

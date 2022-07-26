@@ -36,6 +36,10 @@ public final class ProcessingQuestion extends AbstractGameState {
 		return this.turn.getCurrentTurn();
 	}
 
+	public List<List<PlayerAction>> getTurns() {
+		return this.turn.getTurns();
+	}
+
 	public void ask(String player, PlayerAction.Action question) {
 		throw new GameException("Not implemented");
 	}

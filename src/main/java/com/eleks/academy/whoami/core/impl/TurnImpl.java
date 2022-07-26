@@ -50,7 +50,7 @@ public class TurnImpl implements Turn {
 
 	@Override
 	public List<List<PlayerAction>> getTurns() {
-		return this.turns; //TODO: history
+		return this.turns;
 	}
 
 	@Override

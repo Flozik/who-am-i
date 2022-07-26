@@ -6,6 +6,7 @@ import com.eleks.academy.whoami.model.request.Message;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.GameLight;
+import com.eleks.academy.whoami.model.response.History;
 import com.eleks.academy.whoami.model.response.TurnDetails;
 import com.eleks.academy.whoami.service.GameService;
 import lombok.RequiredArgsConstructor;
@@ -92,6 +93,12 @@ public class GameController {
 							   @RequestHeader(PLAYER) String player,
 							   @RequestBody Message message) {
 		this.gameService.answerQuestion(id, player, message.getMessage());
+	}
+
+	@GetMapping("/{id}/history")
+	public History history(@PathVariable("id") String id,
+						   @RequestHeader(PLAYER) String player) {
+		return this.gameService.history(id, player);
 	}
 
 	@PostMapping("/{id}/leave")

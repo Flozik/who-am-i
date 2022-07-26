@@ -95,8 +95,8 @@ public class PersistentGame implements SynchronousGame {
 
 	@Override
 	public void answerQuestion(String player, VotingOptions answer) {
-		var q = (ProcessingQuestion) currentState.peek();
-		q.answer(player, answer.toString());
+		var processing = (ProcessingQuestion) currentState.peek();
+		processing.answer(player, answer.toString());
 	}
 
 	@Override
@@ -110,6 +110,12 @@ public class PersistentGame implements SynchronousGame {
 		} else {
 			throw new RuntimeException(format("Game %s has state %s", this.getId(), this.getStatus()));
 		}
+	}
+
+	@Override
+	public List<List<PlayerAction>> history() {
+		var processing = (ProcessingQuestion) currentState.peek();
+		return processing.getTurns();
 	}
 
 	@Override

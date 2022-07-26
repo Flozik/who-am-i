@@ -13,12 +13,14 @@ import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GameApiTest {
 
@@ -312,6 +314,44 @@ class GameApiTest {
 			message.message("Question");
 
 			gameApi.answerQuestion(message, "Example", "1234-Uid");
+		}
+	}
+
+	@Test
+	void historyTest() throws IOException{
+		try (InputStream in = getClass().getResourceAsStream("/models/game/history-response.json")) {
+			String expectedRequest = new String(in.readAllBytes());
+
+			wireMockServer
+					.stubFor(WireMock.get(WireMock.urlMatching("/api/v1/games/1234-Uid/history"))
+							.withHeader("X-Player", equalTo("Example"))
+							.willReturn(WireMock.aResponse().withBody(expectedRequest).withStatus(HttpStatus.OK.value())
+							.withHeader("Content-Type", "application/json")));
+
+			GameApi gameApi = new GameApi(new ApiClient());
+
+			PlayerAction playerAction1 = new PlayerAction();
+			playerAction1.player("Player1");
+			playerAction1.action(Action.QUESTION);
+			playerAction1.value(null);
+			PlayerAction playerAction2 = new PlayerAction();
+			playerAction2.player("Player2");
+			playerAction2.action(Action.ANSWER);
+			playerAction2.value(null);
+			PlayerAction playerAction3 = new PlayerAction();
+			playerAction3.player("Player3");
+			playerAction3.action(Action.ANSWER);
+			playerAction3.value(null);
+			PlayerAction playerAction4 = new PlayerAction();
+			playerAction4.player("Player4");
+			playerAction4.action(Action.ANSWER);
+			playerAction4.value(null);
+
+			History history = new History();
+			history.turns(List.of(List.of(playerAction1, playerAction2, playerAction3, playerAction4)));
+
+//			gameApi.history("Example", "1234-Uid");
+			assertEquals(gameApi.history("Example", "1234-Uid"), history);
 		}
 	}
 

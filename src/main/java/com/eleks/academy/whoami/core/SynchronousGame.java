@@ -35,5 +35,7 @@ public interface SynchronousGame {
 
 	SynchronousGame start();
 
+	List<List<PlayerAction>> history();
+
 	void leaveGame(String player);
 }
