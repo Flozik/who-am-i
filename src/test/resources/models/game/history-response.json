@@ -1,26 +1,24 @@
-{
-  "turns": [
-    [
-      {
-        "player": "Player1",
-        "action": "QUESTION",
-        "value": null
-      },
-      {
-        "player": "Player2",
-        "action": "ANSWER",
-        "value": null
-      },
-      {
-        "player": "Player3",
-        "action": "ANSWER",
-        "value": null
-      },
-      {
-        "player": "Player4",
-        "action": "ANSWER",
-        "value": null
-      }
-    ]
+[
+  [
+    {
+      "player": "Player1",
+      "action": "QUESTION",
+      "value": null
+    },
+    {
+      "player": "Player2",
+      "action": "ANSWER",
+      "value": null
+    },
+    {
+      "player": "Player3",
+      "action": "ANSWER",
+      "value": null
+    },
+    {
+      "player": "Player4",
+      "action": "ANSWER",
+      "value": null
+    }
   ]
-}
+]

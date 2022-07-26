@@ -292,8 +292,11 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                $ref: '#/components/schemas/History'
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/PlayerAction'
   /games/{id}/leave:
     post:
       tags:
@@ -398,15 +401,6 @@ components:
           $ref: '#/components/schemas/Action'
         value:
           type: string
-    History:
-      type: object
-      properties:
-        turns:
-          type: array
-          items:
-            type: array
-            items:
-              $ref: '#/components/schemas/PlayerAction'
 #  ---- Enums section  ----------------------------------------
     QuestionAnswer:
       type: string

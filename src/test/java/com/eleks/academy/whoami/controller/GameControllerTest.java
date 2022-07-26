@@ -8,7 +8,6 @@ import com.eleks.academy.whoami.core.impl.PersistentPlayer;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
-import com.eleks.academy.whoami.model.response.History;
 import com.eleks.academy.whoami.service.impl.GameServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -220,15 +219,15 @@ class GameControllerTest {
 		final String player = "player";
 
 		when(gameService.history(id, player))
-				.thenReturn(History.of(List.of(List
-						.of(new PlayerAction(player, PlayerAction.Action.QUESTION, null)))));
+				.thenReturn(List.of(List
+						.of(new PlayerAction(player, PlayerAction.Action.QUESTION, null))));
 
 		this.mockMvc.perform(
 						MockMvcRequestBuilders.get("/games/{id}/history", id)
 								.header("X-Player", player)
 								.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(content().string("{\"turns\":[[{\"player\":\"player\",\"action\":\"QUESTION\",\"value\":null}]]}"));
+				.andExpect(content().string("[[{\"player\":\"player\",\"action\":\"QUESTION\",\"value\":null}]]"));
 	}
 
 	@Test

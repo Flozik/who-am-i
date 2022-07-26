@@ -1,12 +1,12 @@
 package com.eleks.academy.whoami.controller;
 
 import com.eleks.academy.whoami.core.SynchronousPlayer;
+import com.eleks.academy.whoami.core.action.PlayerAction;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.Message;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.GameLight;
-import com.eleks.academy.whoami.model.response.History;
 import com.eleks.academy.whoami.model.response.TurnDetails;
 import com.eleks.academy.whoami.service.GameService;
 import lombok.RequiredArgsConstructor;
@@ -96,8 +96,8 @@ public class GameController {
 	}
 
 	@GetMapping("/{id}/history")
-	public History history(@PathVariable("id") String id,
-						   @RequestHeader(PLAYER) String player) {
+	public List<List<PlayerAction>> history(@PathVariable("id") String id,
+											@RequestHeader(PLAYER) String player) {
 		return this.gameService.history(id, player);
 	}
 

@@ -1,11 +1,11 @@
 package com.eleks.academy.whoami.service;
 
 import com.eleks.academy.whoami.core.SynchronousPlayer;
+import com.eleks.academy.whoami.core.action.PlayerAction;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.GameLight;
-import com.eleks.academy.whoami.model.response.History;
 import com.eleks.academy.whoami.model.response.TurnDetails;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public interface GameService {
 
 	void answerQuestion(String id, String player, String answer);
 
-	History history(String id, String player);
+	List<List<PlayerAction>> history(String id, String player);
 
 	void leaveGame(String id, String player);
 }

@@ -11,7 +11,6 @@ import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.GameLight;
-import com.eleks.academy.whoami.model.response.History;
 import com.eleks.academy.whoami.model.response.PlayerWithState;
 import com.eleks.academy.whoami.repository.GameRepository;
 import com.eleks.academy.whoami.service.impl.GameServiceImpl;
@@ -299,7 +298,7 @@ public class GameServiceImplTest {
 		when(mockedGame.findPlayer(player)).thenReturn(Optional.of(new PersistentPlayer("player")));
 		when(mockedGame.history()).thenReturn(list);
 
-		assertEquals(History.of(list), gameService.history(id, player));
+		assertEquals(list, gameService.history(id, player));
 	}
 
 	@Test

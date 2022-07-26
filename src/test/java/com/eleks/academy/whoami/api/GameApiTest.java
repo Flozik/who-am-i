@@ -347,11 +347,8 @@ class GameApiTest {
 			playerAction4.action(Action.ANSWER);
 			playerAction4.value(null);
 
-			History history = new History();
-			history.turns(List.of(List.of(playerAction1, playerAction2, playerAction3, playerAction4)));
-
-//			gameApi.history("Example", "1234-Uid");
-			assertEquals(gameApi.history("Example", "1234-Uid"), history);
+			assertEquals(gameApi.history("Example", "1234-Uid"),
+					List.of(List.of(playerAction1, playerAction2, playerAction3, playerAction4)));
 		}
 	}
 
