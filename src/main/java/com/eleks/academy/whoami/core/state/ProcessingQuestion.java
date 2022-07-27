@@ -43,12 +43,14 @@ public final class ProcessingQuestion extends AbstractGameState {
 	public void ask(String player, String question) {
 		if (!turn.isAsking(player)) throw new GameException("Please, wait for your turn");
 		turn.action(player, question);
+		updateAsking(players);
 	}
 
 	public void answer(String player, String value) {
 		if (!turn.isQuestionPresent()) throw new GameException("No question for answer");
 		if (!turn.isAnswerer(player)) throw new GameException("You can't answer");
 		turn.action(player, value);
+		updateAnswer(player, players);
 		if (turn.hasTurnEnded()) {
 			turn.makeTurn(players.values().stream().toList(), turn.calculateAnswers());
 			updatePlayersState(this.getCurrentTurn(), players);
@@ -68,6 +70,24 @@ public final class ProcessingQuestion extends AbstractGameState {
 				player.getValue().setPlayerState(PlayerState.ASKING);
 			} else {
 				player.getValue().setPlayerState(PlayerState.WAITING_FOR_QUESTION);
+			}
+		}
+	}
+
+	private void updateAsking(Map<String, SynchronousPlayer> players) {
+		for (var playerEntry : players.entrySet()) {
+			if (playerEntry.getValue().getPlayerState().equals(PlayerState.ASKING)) {
+				playerEntry.getValue().setPlayerState(PlayerState.WAITING_FOR_ANSWERS);
+			} else {
+				playerEntry.getValue().setPlayerState(PlayerState.ANSWERING);
+			}
+		}
+	}
+
+	private void updateAnswer(String player, Map<String, SynchronousPlayer> players) {
+		for (var playerEntry : players.entrySet()) {
+			if (playerEntry.getValue().getName().equals(player)) {
+				playerEntry.getValue().setPlayerState(PlayerState.WAITING_FOR_QUESTION);
 			}
 		}
 	}
