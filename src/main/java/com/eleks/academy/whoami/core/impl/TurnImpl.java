@@ -14,17 +14,7 @@ public class TurnImpl implements Turn {
 	private List<List<PlayerAction>> turns = new ArrayList<>();
 
 	public TurnImpl(List<SynchronousPlayer> players) {
-		SynchronousPlayer currentPlayer = players.get(0);
-		List<PlayerAction> playerActions = new ArrayList<>(players.size());
-
-		players.forEach(p -> {
-			if (currentPlayer.equals(p)) {
-				playerActions.add(new PlayerAction(p.getName(), PlayerAction.Action.QUESTION, null));
-			} else {
-				playerActions.add(new PlayerAction(p.getName(), PlayerAction.Action.ANSWER, null));
-			}
-		});
-		turns.add(playerActions);
+		initPlayers(players);
 	}
 
 	@Override
@@ -98,13 +88,17 @@ public class TurnImpl implements Turn {
 		return yes > no;
 	}
 
+	public void resetTurn(List<SynchronousPlayer> players) {
+		turns.remove(this.getCurrentTurn());
+		initPlayers(players);
+	}
+
 	private List<PlayerAction> newTurn(List<PlayerAction> previousTurn) {
 		List<PlayerAction> playerActions = new ArrayList<>();
 		String firstPlayer = previousTurn.get(0).getPlayer();
 
 		previousTurn.forEach(pA -> {
 			if (firstPlayer.equals(pA.getPlayer())) {
-				//TODO: value not implemented
 				playerActions.add(new PlayerAction(pA.getPlayer(), PlayerAction.Action.QUESTION, null));
 			} else {
 				playerActions.add(new PlayerAction(pA.getPlayer(), PlayerAction.Action.ANSWER, null));
@@ -124,6 +118,19 @@ public class TurnImpl implements Turn {
 			}
 		});
 		previousTurn.retainAll(tmpPlayerAction);
+	}
+
+	private void initPlayers(List<SynchronousPlayer> players) {
+		SynchronousPlayer currentPlayer = players.get(0);
+		List<PlayerAction> playerActions = new ArrayList<>(players.size());
+		players.forEach(p -> {
+			if (currentPlayer.equals(p)) {
+				playerActions.add(new PlayerAction(p.getName(), PlayerAction.Action.QUESTION, null));
+			} else {
+				playerActions.add(new PlayerAction(p.getName(), PlayerAction.Action.ANSWER, null));
+			}
+		});
+		turns.add(playerActions);
 	}
 
 }

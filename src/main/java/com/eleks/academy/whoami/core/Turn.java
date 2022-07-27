@@ -22,6 +22,8 @@ public interface Turn {
 
 	boolean calculateAnswers();
 
+	void resetTurn(List<SynchronousPlayer> players);
+
 	void action(String player, String value);
 
 }

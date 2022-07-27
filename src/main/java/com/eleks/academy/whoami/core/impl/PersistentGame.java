@@ -142,6 +142,10 @@ public class PersistentGame implements SynchronousGame {
 	@Override
 	public void leaveGame(String player) {
 		this.currentState.peek().leavePlayer(player);
+		if (this.currentState.peek().getStatus().equals(GameStatus.IN_PROGRESS)) {
+			var processing = (ProcessingQuestion) currentState.peek();
+			processing.updateCurrentTurn();
+		}
 	}
 
 	private <T, R> R applyIfPresent(T source, Function<T, R> mapper) {

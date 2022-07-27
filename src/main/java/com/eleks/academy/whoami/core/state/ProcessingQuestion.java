@@ -39,6 +39,11 @@ public final class ProcessingQuestion extends AbstractGameState {
 	public List<List<PlayerAction>> getTurns() {
 		return this.turn.getTurns();
 	}
+ 
+	public void updateCurrentTurn() {
+		turn.resetTurn(players.values().stream().toList());
+		updatePlayersState(this.getCurrentTurn(), players);
+	}
 
 	public void ask(String player, String question) {
 		if (!turn.isAsking(player)) throw new GameException("Please, wait for your turn");
